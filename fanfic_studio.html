@@ -187,7 +187,15 @@ input, textarea { font-family: inherit; outline: none; }
   height: 110px;
   background: linear-gradient(135deg, #1a1a2e, #2e1040);
   display: flex; align-items: center; justify-content: center;
-  font-size: 30px; position: relative;
+  font-size: 30px; position: relative; overflow: hidden;
+}
+.feed-card-img img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+}
+.feed-card-img .feed-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.5));
 }
 .feed-card-theme {
   position: absolute; top: 6px; left: 6px;
@@ -594,6 +602,32 @@ input, textarea { font-family: inherit; outline: none; }
 .clip-detail-title { font-size: 14px; font-weight: 800; flex: 1; }
 .clip-detail-theme { font-size: 11px; color: var(--accent2); }
 
+.clip-hero-img {
+  width: 100%; height: 220px; object-fit: cover; object-position: top center;
+  display: block;
+}
+.clip-hero-wrap {
+  position: relative; width: 100%; height: 220px; overflow: hidden;
+  background: #1a1a2e;
+}
+.clip-hero-wrap::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(14,14,18,.85) 100%);
+}
+.clip-hero-title-overlay {
+  position: absolute; bottom: 16px; left: 16px; right: 16px; z-index: 1;
+}
+.clip-hero-theme-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(139,92,246,.35); border: 1px solid rgba(139,92,246,.5);
+  border-radius: 20px; padding: 3px 10px; font-size: 10px; color: #fff;
+  font-weight: 600; margin-bottom: 6px; backdrop-filter: blur(4px);
+}
+.clip-hero-big-title {
+  font-size: 22px; font-weight: 900; color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,.6); line-height: 1.2;
+}
+
 .clip-detail-body { padding: 16px; }
 .clip-author-row {
   display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
@@ -902,7 +936,9 @@ input, textarea { font-family: inherit; outline: none; }
         <div class="feed-scroll">
           <div class="feed-card" onclick="openFeedItem(0)">
             <div class="feed-card-img" style="background:linear-gradient(135deg,#1a1a2e,#2e1040);">
-              ☁️<div class="feed-card-theme">Fluff</div>
+              <img src="images/clip1.png" alt="봄날의 고백">
+              <div class="feed-card-overlay"></div>
+              <div class="feed-card-theme">Fluff</div>
             </div>
             <div class="feed-card-body">
               <div class="feed-card-title">봄날의 고백</div>
@@ -915,7 +951,9 @@ input, textarea { font-family: inherit; outline: none; }
           </div>
           <div class="feed-card" onclick="openFeedItem(1)">
             <div class="feed-card-img" style="background:linear-gradient(135deg,#2e1a1a,#1a0a0a);">
-              💔<div class="feed-card-theme">Angst</div>
+              <img src="images/clip2.png" alt="이별 이후">
+              <div class="feed-card-overlay"></div>
+              <div class="feed-card-theme">Angst</div>
             </div>
             <div class="feed-card-body">
               <div class="feed-card-title">이별 이후</div>
@@ -928,7 +966,9 @@ input, textarea { font-family: inherit; outline: none; }
           </div>
           <div class="feed-card" onclick="openFeedItem(2)">
             <div class="feed-card-img" style="background:linear-gradient(135deg,#1a2e1a,#0a1a0a);">
-              😂<div class="feed-card-theme">Funny</div>
+              <img src="images/clip3.png" alt="헬기 드립 대환장">
+              <div class="feed-card-overlay"></div>
+              <div class="feed-card-theme">Funny</div>
             </div>
             <div class="feed-card-body">
               <div class="feed-card-title">헬기 드립 대환장</div>
@@ -1000,6 +1040,7 @@ input, textarea { font-family: inherit; outline: none; }
           <div class="clip-detail-title" id="clip-title-header">클립 보기</div>
           <div class="clip-detail-theme" id="clip-theme-header"></div>
         </div>
+        <div id="clip-hero-area"></div>
         <div class="clip-detail-body" id="clip-detail-body">
         </div>
         <div style="height:80px;"></div>
@@ -1915,10 +1956,19 @@ function renderFeed() {
         </div>
         <div class="feed-like-count">💜 ${f.likes}</div>
       </div>
-      <div class="feed-card-preview" style="background:${styleMap[f.style]||styleMap.dark};">
-        <div class="feed-card-title-text" style="color:${colorMap[f.style]||'#fff'};">${f.theme} ${f.title}</div>
-        <div class="feed-bubble" style="color:${colorMap[f.style]||'#fff'};">${f.excerpt}</div>
-        <div style="font-size:9px;color:${colorMap[f.style]||'#fff'};opacity:.4;margin-top:4px;">#BunjangGlobal</div>
+      <div class="feed-card-preview" style="background:${styleMap[f.style]||styleMap.dark};padding:0;overflow:hidden;">
+        ${CLIP_DATA[i]?.img ? `<div style="position:relative;height:120px;overflow:hidden;">
+          <img src="${CLIP_DATA[i].img}" style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="${f.title}">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65));"></div>
+          <div style="position:absolute;bottom:10px;left:12px;right:12px;">
+            <div style="font-size:13px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);">${f.theme} ${f.title}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:2px;line-height:1.4;">${f.excerpt}</div>
+          </div>
+        </div>` : `<div style="padding:10px;">
+          <div class="feed-card-title-text" style="color:${colorMap[f.style]||'#fff'};">${f.theme} ${f.title}</div>
+          <div class="feed-bubble" style="color:${colorMap[f.style]||'#fff'};">${f.excerpt}</div>
+        </div>`}
+        <div style="font-size:9px;color:${colorMap[f.style]||'#fff'};opacity:.4;margin:4px 12px 8px;">#BunjangGlobal</div>
       </div>
       <div class="feed-item-actions">
         <button class="feed-action-btn" id="like-btn-${i}" onclick="event.stopPropagation();toggleLike(${i})">💜 좋아요</button>
@@ -1967,7 +2017,7 @@ function openFeedItem(i) {
 const CLIP_DATA = [
   {
     user: 'starlight_j', theme: '☁️', themeName: 'Fluff', mode: '유사연',
-    title: '봄날의 고백', style: 'dark', ago: '2시간 전', likes: 142,
+    title: '봄날의 고백', style: 'dark', ago: '2시간 전', likes: 142, img: 'images/clip1.png',
     conversations: [
       { speaker: 1, name: '민준', text: '야, 너 오늘 왜 이렇게 멀뚱멀뚱 서 있어. 무슨 생각 해?', sceneBg: '벚꽃 나무 아래, 바람이 슬쩍 부는 오후' },
       { speaker: 0, name: '나', text: '...아무것도 아니야. 그냥 꽃이 예뻐서.' },
@@ -1986,7 +2036,7 @@ const CLIP_DATA = [
   },
   {
     user: 'moonchild_k', theme: '💔', themeName: 'Angst', mode: '커플링',
-    title: '이별 이후', style: 'sunset', ago: '5시간 전', likes: 89,
+    title: '이별 이후', style: 'sunset', ago: '5시간 전', likes: 89, img: 'images/clip2.png',
     conversations: [
       { speaker: 0, name: '지수', text: '...왔어.', sceneBg: '비가 내리는 늦은 밤, 편의점 앞' },
       { speaker: 1, name: '현우', text: '전화는 왜 안 받았어.' },
@@ -2004,7 +2054,7 @@ const CLIP_DATA = [
   },
   {
     user: 'fan99', theme: '😂', themeName: 'Funny', mode: '유사연',
-    title: '헬기 드립 대환장', style: 'minimal', ago: '1일 전', likes: 67,
+    title: '헬기 드립 대환장', style: 'minimal', ago: '1일 전', likes: 67, img: 'images/clip3.png',
     conversations: [
       { speaker: 1, name: '태양', text: '너 오늘 왜 이렇게 늦었어. 30분이나 기다렸잖아.', sceneBg: '약속 장소 카페 앞, 태양이 팔짱을 끼고 서 있다' },
       { speaker: 0, name: '나', text: '미안미안, 지하철이 진짜...' },
@@ -2022,7 +2072,7 @@ const CLIP_DATA = [
   },
   {
     user: 'pinkbunny22', theme: '🌟', themeName: 'Wholesome', mode: '커플링',
-    title: '항상 네 편이야', style: 'fancy', ago: '2일 전', likes: 203,
+    title: '항상 네 편이야', style: 'fancy', ago: '2일 전', likes: 203, img: 'images/clip4.png',
     conversations: [
       { speaker: 0, name: '세진', text: '오늘 무대 진짜 망한 것 같아. 왜 이렇게 실수를 많이 했지.', sceneBg: '공연 후 대기실, 세진이 혼자 앉아 있다' },
       { speaker: 1, name: '리온', text: '망하긴. 앞줄 팬들 표정 못 봤어? 다 울고 있었는데.' },
@@ -2041,7 +2091,7 @@ const CLIP_DATA = [
   },
   {
     user: 'kpop_writer', theme: '⚡', themeName: 'Action', mode: '커플링',
-    title: '마지막 임무', style: 'dark', ago: '3일 전', likes: 156,
+    title: '마지막 임무', style: 'dark', ago: '3일 전', likes: 156, img: 'images/clip5.png',
     conversations: [
       { speaker: 0, name: '카이', text: '지금 당장 움직여! 시간이 없어!', sceneBg: '폭발 직전의 건물, 경보음이 울린다' },
       { speaker: 1, name: '도현', text: '카이, 너 팔 다쳤잖아. 나 먼저 가면 안 돼.' },
@@ -2071,6 +2121,16 @@ function openClip(data) {
 
   document.getElementById('clip-title-header').textContent = full.title;
   document.getElementById('clip-theme-header').textContent = full.theme + ' ' + full.themeName;
+
+  // Hero image
+  document.getElementById('clip-hero-area').innerHTML = full.img ? `
+    <div class="clip-hero-wrap">
+      <img class="clip-hero-img" src="${full.img}" alt="${full.title}">
+      <div class="clip-hero-title-overlay">
+        <div class="clip-hero-theme-badge">${full.theme} ${full.themeName} · ${full.mode}</div>
+        <div class="clip-hero-big-title">${full.title}</div>
+      </div>
+    </div>` : '';
 
   // Build conversations HTML
   let convHtml = '';
