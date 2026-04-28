@@ -1529,7 +1529,6 @@ function renderVoteList() {
         <div style="font-size:12px;font-weight:700;">${v.title}</div>
         <div style="font-size:10px;color:var(--sub);">${v.user}</div>
       </div>
-      <div style="font-size:11px;color:var(--sub);">💜 ${v.votes}</div>
     </div>
   `).join('');
 }
@@ -2163,7 +2162,7 @@ function finishStudio() {
     const themeData = THEMES.find(t => t.id === state.selectedTheme);
     state.gallery.unshift({
       id: Date.now(),
-      title: state.cardTitle || '무제 하이라이트',
+      title: state.cardTitle || '무제 클립',
       theme: themeData?.emoji || '✨',
       themeName: themeData?.name || '',
       mode: state.mode==='reader'?'유사연':'커플링',
@@ -2171,7 +2170,8 @@ function finishStudio() {
       style: state.cardStyle,
       public: state.isPublic,
       date: new Date().toLocaleDateString('ko-KR').replace(/\. /g,'.').replace('.','/'),
-      likes: 0
+      likes: 0,
+      generatedImage: state.generatedImage || null
     });
 
     // build share card
@@ -2223,15 +2223,28 @@ function filterGallery(filter, el) {
 function renderGalleryGrid(items) {
   const grid = document.getElementById('gallery-grid');
   if (!items.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">아직 하이라이트가 없어요<br><button class="btn-primary" style="margin-top:12px;" onclick="startStudio()">만들기 시작</button></div>`;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">아직 클립이 없어요<br><button class="btn-primary" style="margin-top:12px;" onclick="startStudio()">만들기 시작</button></div>`;
     return;
   }
   const styleMap = { dark:'#1a1a2e', minimal:'#f4f4f8', fancy:'#ffd6e7', sunset:'#1f1035', mint:'#0d2b2b' };
-  grid.innerHTML = items.map(g => `
+  // CLIP_DATA 이미지 매핑 (제목 기준)
+  const clipImgMap = {};
+  if (typeof CLIP_DATA !== 'undefined') CLIP_DATA.forEach(c => { if (c.img) clipImgMap[c.title] = c.img; });
+
+  grid.innerHTML = items.map(g => {
+    const clipImg = clipImgMap[g.title] || (g.generatedImage ? null : null);
+    const genImg = g.generatedImage;
+    const thumbContent = clipImg
+      ? `<img src="${clipImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;" alt="${g.title}">
+         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.5));"></div>`
+      : genImg
+        ? `<div style="position:absolute;inset:0;background:${genImg.grad};display:flex;align-items:center;justify-content:center;font-size:32px;">${genImg.icon}</div>`
+        : `<div style="position:absolute;inset:0;background:${styleMap[g.style]||'#1a1a2e'};display:flex;align-items:center;justify-content:center;font-size:28px;">${g.theme}</div>`;
+    return `
     <div class="gallery-item">
-      <div class="gallery-thumb" style="background:${styleMap[g.style]||'#1a1a2e'};">
-        ${g.theme}
-        <div class="gallery-privacy">${g.public?'공개':'🔒'}</div>
+      <div class="gallery-thumb" style="background:${styleMap[g.style]||'#1a1a2e'};position:relative;overflow:hidden;">
+        ${thumbContent}
+        <div class="gallery-privacy" style="position:absolute;top:5px;right:5px;">${g.public?'공개':'🔒'}</div>
       </div>
       <div class="gallery-body">
         <div class="gallery-title">${g.title}</div>
@@ -2241,7 +2254,8 @@ function renderGalleryGrid(items) {
           <button class="gallery-action-btn" onclick="togglePublic(${g.id})">${g.public?'비공개로':'공개로'}</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function shareGalleryItem() { addMileage(5,'하이라이트 공유'); showToast('공유 완료! +5 마일리지 ⭐'); }
