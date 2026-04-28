@@ -2064,10 +2064,13 @@ function s3_mode() {
         커플링<div class="mode-opt-sub">A × B</div>
       </div>
     </div>
-    <div class="field-label">턴 수 (3 – 10턴)</div>
+    <div class="field-label">턴 수 (3 – 10턴) · 메시지는 턴 × 2개</div>
     <div class="turns-row">
       ${[3,4,5,6,7,8,9,10].map(n => `
-        <div class="turn-btn ${state.turns===n?'on':''}" onclick="setTurns(${n})">${n}</div>`).join('')}
+        <div class="turn-btn ${state.turns===n?'on':''}" onclick="setTurns(${n})">
+          <div>${n}턴</div>
+          <div style="font-size:9px;opacity:.6;">${n*2}개</div>
+        </div>`).join('')}
     </div>
     <div class="cost-preview">
       <span style="color:var(--sub);">예상 마일리지 (AI 사용 시)</span>
@@ -2232,7 +2235,8 @@ function s4_chat() {
       </div>`;
   });
 
-  const canAdd = state.conversations.length < state.turns;
+  const maxMessages = state.turns * 2;
+  const canAdd = state.conversations.length < maxMessages;
   const whoA = state.mode==='reader' ? '나' : nameA;
   const whoB = nameB;
 
@@ -2242,10 +2246,10 @@ function s4_chat() {
   return `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="font-size:14px;font-weight:800;">대화 작성</div>
-      <div style="font-size:12px;font-weight:700;color:var(--accent2);">${state.conversations.length}<span style="color:var(--muted);">/${state.turns}턴</span></div>
+      <div style="font-size:12px;font-weight:700;color:var(--accent2);">${state.conversations.length}<span style="color:var(--muted);">/${maxMessages}개</span> <span style="font-size:10px;color:var(--muted);font-weight:500;">· ${state.turns}턴</span></div>
     </div>
     <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:8px;padding:7px 10px;margin-bottom:10px;font-size:11px;color:var(--sub);">
-      ${THEMES.find(t=>t.id===state.selectedTheme)?.emoji} ${THEMES.find(t=>t.id===state.selectedTheme)?.name} · ${state.mode==='reader'?'유사연':'커플링'} · ${state.turns}턴
+      ${THEMES.find(t=>t.id===state.selectedTheme)?.emoji} ${THEMES.find(t=>t.id===state.selectedTheme)?.name} · ${state.mode==='reader'?'유사연':'커플링'} · ${state.turns}턴 (${maxMessages}개)
     </div>
 
     ${imgAreaHtml}
@@ -2280,7 +2284,7 @@ function s4_chat() {
       </div>
       <button class="turn-add-btn" onclick="addTurn()" style="margin-top:8px;width:100%;">대사 추가 ＋</button>
     </div>` : `<div style="text-align:center;padding:12px;background:rgba(139,92,246,.08);border-radius:10px;font-size:12px;color:var(--accent2);">
-      🎉 ${state.turns}턴 완성! 카드를 만들어봐요</div>`}
+      🎉 ${state.turns}턴 (${maxMessages}개) 완성! 카드를 만들어봐요</div>`}
   `;
 }
 
