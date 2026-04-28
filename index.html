@@ -990,7 +990,7 @@ input, textarea { font-family: inherit; outline: none; }
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;">
           <div id="vote-list"></div>
-          <button class="btn-next" style="width:100%;margin-top:8px;" onclick="submitVote()">투표하기 (+5 마일리지)</button>
+          <button class="btn-next" id="vote-submit-btn" style="width:100%;margin-top:8px;" onclick="submitVote()">투표하기 (+5 마일리지)</button>
         </div>
       </div>
 
@@ -1347,36 +1347,96 @@ function goPage(name) {
 /* ═══════════════════════════════════════════
    HOME
 ═══════════════════════════════════════════ */
+const VOTE_DATA = [
+  { title:'봄날의 고백', user:'@starlight_j', votes: 47 },
+  { title:'항상 네 편이야', user:'@pinkbunny22', votes: 38 },
+  { title:'이별 이후', user:'@moonchild_k', votes: 29 }
+];
+let voteSubmitted = false;
+
 function renderVoteList() {
-  const votes = [
-    { title:'봄날의 고백', user:'@starlight_j', votes: 47 },
-    { title:'항상 네 편이야', user:'@pinkbunny22', votes: 38 },
-    { title:'이별 이후', user:'@moonchild_k', votes: 29 }
-  ];
   const el = document.getElementById('vote-list');
   if (!el) return;
-  el.innerHTML = votes.map((v,i) => `
+
+  if (voteSubmitted) {
+    const total = VOTE_DATA.reduce((s, v) => s + v.votes, 0);
+    const maxVotes = Math.max(...VOTE_DATA.map(v => v.votes));
+    el.innerHTML = VOTE_DATA.map((v, i) => {
+      const pct = Math.round(v.votes / total * 100);
+      const isTop = v.votes === maxVotes;
+      return `
+        <div style="padding:8px 0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;" id="vote-result-row-${i}">
+          <div class="vote-bar-bg" id="vote-bar-${i}" style="
+            position:absolute;inset:0;
+            background:${isTop ? 'rgba(139,92,246,.18)' : 'rgba(255,255,255,.04)'};
+            width:0%;transition:width .7s cubic-bezier(.4,0,.2,1) ${i*0.12}s;
+          "></div>
+          <div style="position:relative;display:flex;align-items:center;gap:8px;">
+            <div style="width:20px;height:20px;border-radius:50%;
+              background:${isTop ? 'var(--accent)' : 'var(--surface2)'};
+              border:2px solid ${isTop ? 'var(--accent)' : 'var(--border)'};
+              display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              ${isTop ? '<span style="color:#fff;font-size:9px;">👑</span>' : ''}
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:12px;font-weight:${isTop?'800':'700'};color:${isTop?'var(--accent2)':'var(--text)'};">${v.title}</div>
+              <div style="font-size:10px;color:var(--sub);">${v.user}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div style="font-size:13px;font-weight:800;color:${isTop?'var(--accent2)':'var(--text)'};">${pct}%</div>
+              <div style="font-size:10px;color:var(--sub);">💜 ${v.votes}표</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // 애니메이션: 다음 프레임에 width 적용
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const total2 = VOTE_DATA.reduce((s, v) => s + v.votes, 0);
+        VOTE_DATA.forEach((v, i) => {
+          const bar = document.getElementById('vote-bar-' + i);
+          if (bar) bar.style.width = Math.round(v.votes / total2 * 100) + '%';
+        });
+      });
+    });
+
+    const btn = document.getElementById('vote-submit-btn');
+    if (btn) {
+      btn.textContent = '✅ 투표 완료';
+      btn.disabled = true;
+      btn.style.opacity = '.5';
+      btn.style.cursor = 'default';
+    }
+    return;
+  }
+
+  el.innerHTML = VOTE_DATA.map((v, i) => `
     <div class="vote-item" style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);" onclick="selectVote(${i})">
       <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;" id="vote-radio-${i}"></div>
       <div style="flex:1;">
         <div style="font-size:12px;font-weight:700;">${v.title}</div>
         <div style="font-size:10px;color:var(--sub);">${v.user}</div>
       </div>
-      <div style="font-size:11px;color:var(--sub);">❤ ${v.votes}</div>
+      <div style="font-size:11px;color:var(--sub);">💜 ${v.votes}</div>
     </div>
   `).join('');
 }
+
 let selectedVote = -1;
 function selectVote(i) {
   selectedVote = i;
-  document.querySelectorAll('[id^=vote-radio-]').forEach((el,j) => {
+  document.querySelectorAll('[id^=vote-radio-]').forEach((el, j) => {
     el.style.background = j === i ? 'var(--accent)' : '';
     el.style.borderColor = j === i ? 'var(--accent)' : 'var(--border)';
     el.innerHTML = j === i ? '<span style="color:#fff;font-size:10px;">✓</span>' : '';
   });
 }
+
 function submitVote() {
   if (selectedVote < 0) { showToast('항목을 선택해주세요'); return; }
+  VOTE_DATA[selectedVote].votes += 1;
+  voteSubmitted = true;
   addMileage(5, '커뮤니티 투표 참여');
   showToast('투표 완료! +5 마일리지 적립 ⭐');
   selectedVote = -1;
