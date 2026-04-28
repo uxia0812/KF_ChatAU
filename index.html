@@ -578,6 +578,115 @@ input, textarea { font-family: inherit; outline: none; }
 }
 
 /* ═══════════════════════════════════════════
+   CLIP DETAIL PAGE
+═══════════════════════════════════════════ */
+.clip-detail-page { padding: 0; }
+.clip-detail-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  position: sticky; top: 52px; z-index: 50;
+}
+.clip-back-btn {
+  background: none; border: none; color: var(--sub); font-size: 18px;
+  cursor: pointer; padding: 0 4px; line-height: 1;
+}
+.clip-detail-title { font-size: 14px; font-weight: 800; flex: 1; }
+.clip-detail-theme { font-size: 11px; color: var(--accent2); }
+
+.clip-detail-body { padding: 16px; }
+.clip-author-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.clip-author-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff; font-weight: 700; flex-shrink: 0;
+}
+.clip-author-name { font-size: 13px; font-weight: 700; }
+.clip-author-meta { font-size: 11px; color: var(--sub); }
+.clip-love-btn {
+  margin-left: auto; background: rgba(236,72,153,.12); border: 1px solid rgba(236,72,153,.35);
+  color: var(--pink); border-radius: 20px; padding: 6px 14px;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: .2s;
+}
+.clip-love-btn.loved { background: var(--pink); color: #fff; }
+
+.clip-chat-card {
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 16px;
+}
+.clip-chat-inner { padding: 16px; min-height: 200px; }
+.clip-chat-header-row {
+  font-size: 10px; opacity: .6; margin-bottom: 6px;
+}
+.clip-chat-title { font-size: 18px; font-weight: 900; margin-bottom: 12px; }
+.clip-bubble-row { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
+.clip-bubble-row.right { flex-direction: row-reverse; }
+.clip-bubble-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+}
+.clip-bubble-name { font-size: 9px; opacity: .7; margin-bottom: 2px; }
+.clip-bubble {
+  max-width: 78%; border-radius: 14px; padding: 9px 13px;
+  font-size: 13px; line-height: 1.55; word-break: break-word;
+}
+.clip-scene-strip {
+  font-size: 10px; opacity: .55; font-style: italic;
+  text-align: center; margin: 6px 0; padding: 4px 0;
+  border-top: 1px dashed; border-bottom: 1px dashed;
+}
+.clip-wm { font-size: 9px; opacity: .4; text-align: right; margin-top: 10px; }
+
+.clip-stats-row {
+  display: flex; gap: 8px; margin-bottom: 14px;
+}
+.clip-stat-chip {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 12px; font-size: 11px; color: var(--sub);
+}
+
+.clip-actions-row { display: flex; gap: 8px; margin-bottom: 20px; }
+.clip-action-btn {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px; font-size: 12px; font-weight: 600;
+  color: var(--sub); cursor: pointer; text-align: center; transition: .15s;
+}
+.clip-action-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* Comments */
+.clip-comments-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+.clip-comment {
+  display: flex; gap: 9px; margin-bottom: 14px;
+}
+.clip-comment-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.clip-comment-bubble {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 9px 12px; flex: 1;
+}
+.clip-comment-user { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+.clip-comment-text { font-size: 12px; color: var(--sub); line-height: 1.5; }
+.clip-comment-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.clip-comment-input-row {
+  display: flex; gap: 8px; margin-top: 8px;
+}
+.clip-comment-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); border-radius: 10px; padding: 9px 12px; font-size: 13px;
+  transition: border-color .2s;
+}
+.clip-comment-input:focus { border-color: var(--accent); outline: none; }
+.clip-comment-send {
+  background: var(--accent); color: #fff; border: none; border-radius: 10px;
+  padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════
    FEED PAGE
 ═══════════════════════════════════════════ */
 .feed-page { padding: 12px 16px; }
@@ -787,7 +896,7 @@ input, textarea { font-family: inherit; outline: none; }
       <!-- 인기 피드 프리뷰 -->
       <div class="section">
         <div class="section-head">
-          <div class="section-title">🔥 이번 주 인기</div>
+          <div class="section-title">🔥 이번 주 인기 클립</div>
           <div class="section-more" onclick="goPage('feed')">전체보기 →</div>
         </div>
         <div class="feed-scroll">
@@ -797,7 +906,7 @@ input, textarea { font-family: inherit; outline: none; }
             </div>
             <div class="feed-card-body">
               <div class="feed-card-title">봄날의 고백</div>
-              <div class="feed-card-meta">@starlight_j · 유사연 · 5턴</div>
+              <div class="feed-card-meta">@starlight_j · 유사연 · 7턴</div>
               <div class="feed-card-actions">
                 <button class="feed-mini-btn" onclick="event.stopPropagation();likeCard(this)">💜 142</button>
                 <button class="feed-mini-btn" onclick="event.stopPropagation();remixCard()">🔀 리믹스</button>
@@ -810,7 +919,7 @@ input, textarea { font-family: inherit; outline: none; }
             </div>
             <div class="feed-card-body">
               <div class="feed-card-title">이별 이후</div>
-              <div class="feed-card-meta">@moonchild_k · 커플링 · 8턴</div>
+              <div class="feed-card-meta">@moonchild_k · 커플링 · 7턴</div>
               <div class="feed-card-actions">
                 <button class="feed-mini-btn" onclick="event.stopPropagation();likeCard(this)">💜 89</button>
                 <button class="feed-mini-btn" onclick="event.stopPropagation();remixCard()">🔀 리믹스</button>
@@ -823,7 +932,7 @@ input, textarea { font-family: inherit; outline: none; }
             </div>
             <div class="feed-card-body">
               <div class="feed-card-title">헬기 드립 대환장</div>
-              <div class="feed-card-meta">@fan99 · 유사연 · 3턴</div>
+              <div class="feed-card-meta">@fan99 · 유사연 · 7턴</div>
               <div class="feed-card-actions">
                 <button class="feed-mini-btn" onclick="event.stopPropagation();likeCard(this)">💜 67</button>
                 <button class="feed-mini-btn" onclick="event.stopPropagation();remixCard()">🔀 리믹스</button>
@@ -836,7 +945,7 @@ input, textarea { font-family: inherit; outline: none; }
       <!-- 주간 투표 -->
       <div class="section">
         <div class="section-head">
-          <div class="section-title">🗳 이번 주 최고 설렘 장면 투표</div>
+          <div class="section-title">🗳 이번 주 최고 설렘 클립 투표</div>
           <div class="section-more">+5★</div>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;">
@@ -874,12 +983,26 @@ input, textarea { font-family: inherit; outline: none; }
     <div class="page" id="page-feed">
       <div class="feed-page">
         <div class="feed-tabs">
-          <div class="feed-tab on" onclick="switchFeedTab(this,'hot')">🔥 인기</div>
-          <div class="feed-tab" onclick="switchFeedTab(this,'new')">✨ 최신</div>
-          <div class="feed-tab" onclick="switchFeedTab(this,'vote')">🗳 투표</div>
+          <div class="feed-tab on" onclick="switchFeedTab(this,'hot')">🔥 인기 클립</div>
+          <div class="feed-tab" onclick="switchFeedTab(this,'new')">✨ 최신 클립</div>
+          <div class="feed-tab" onclick="switchFeedTab(this,'vote')">🗳 클립 투표</div>
         </div>
         <div id="feed-list"></div>
         <div style="height:72px;"></div>
+      </div>
+    </div>
+
+    <!-- ══ CLIP DETAIL PAGE ══ -->
+    <div class="page" id="page-clip">
+      <div class="clip-detail-page">
+        <div class="clip-detail-header">
+          <button class="clip-back-btn" onclick="closeClip()">←</button>
+          <div class="clip-detail-title" id="clip-title-header">클립 보기</div>
+          <div class="clip-detail-theme" id="clip-theme-header"></div>
+        </div>
+        <div class="clip-detail-body" id="clip-detail-body">
+        </div>
+        <div style="height:80px;"></div>
       </div>
     </div>
 
@@ -1783,7 +1906,7 @@ function renderFeed() {
   const colorMap = { dark:'#fff', minimal:'#1a1a1a', fancy:'#2d1a4e', sunset:'#fff', mint:'#a7f3d0' };
   const list = document.getElementById('feed-list');
   list.innerHTML = FEED_DATA.map((f,i) => `
-    <div class="feed-item fade-up" style="animation-delay:${i*0.05}s;">
+    <div class="feed-item fade-up" style="animation-delay:${i*0.05}s;" onclick="openFeedItem(${i})">
       <div class="feed-item-header">
         <div class="feed-user-avatar">${f.user[0].toUpperCase()}</div>
         <div>
@@ -1798,9 +1921,9 @@ function renderFeed() {
         <div style="font-size:9px;color:${colorMap[f.style]||'#fff'};opacity:.4;margin-top:4px;">#BunjangGlobal</div>
       </div>
       <div class="feed-item-actions">
-        <button class="feed-action-btn" id="like-btn-${i}" onclick="toggleLike(${i})">💜 좋아요</button>
-        <button class="feed-action-btn" onclick="remixItem(${i})">🔀 리믹스</button>
-        <button class="feed-action-btn" onclick="shareItem(${i})">📤 공유</button>
+        <button class="feed-action-btn" id="like-btn-${i}" onclick="event.stopPropagation();toggleLike(${i})">💜 좋아요</button>
+        <button class="feed-action-btn" onclick="event.stopPropagation();remixItem(${i})">🔀 리믹스</button>
+        <button class="feed-action-btn" onclick="event.stopPropagation();shareItem(${i})">📤 공유</button>
       </div>
     </div>`).join('');
 }
@@ -1835,8 +1958,232 @@ function shareItem(i) { addMileage(5,'피드 공유'); showToast('+5 마일리�
 function remixCard() { showToast('리믹스 모드로 진입해요 🔀'); setTimeout(() => startStudio(), 600); }
 
 function openFeedItem(i) {
-  // just show toast for now
-  showToast('💜 ' + FEED_DATA[i].title);
+  openClip(FEED_DATA[i]);
+}
+
+/* ═══════════════════════════════════════════
+   CLIP DETAIL
+═══════════════════════════════════════════ */
+const CLIP_DATA = [
+  {
+    user: 'starlight_j', theme: '☁️', themeName: 'Fluff', mode: '유사연',
+    title: '봄날의 고백', style: 'dark', ago: '2시간 전', likes: 142,
+    conversations: [
+      { speaker: 1, name: '민준', text: '야, 너 오늘 왜 이렇게 멀뚱멀뚱 서 있어. 무슨 생각 해?', sceneBg: '벚꽃 나무 아래, 바람이 슬쩍 부는 오후' },
+      { speaker: 0, name: '나', text: '...아무것도 아니야. 그냥 꽃이 예뻐서.' },
+      { speaker: 1, name: '민준', text: '거짓말. 아까부터 나 보면 눈 피하잖아.' },
+      { speaker: 0, name: '나', text: '안 피했거든?! 그냥 꽃 본 거라고.' },
+      { speaker: 1, name: '민준', text: '그럼 이제 나 좀 봐봐. 제대로.', sceneBg: '민준이 한 발 가까이 다가선다' },
+      { speaker: 0, name: '나', text: '...뭐, 뭐야 갑자기.' },
+      { speaker: 1, name: '민준', text: '"그냥... 네가 옆에 있으면 좋았어. 그게 다야." 작은 목소리로.' },
+    ],
+    comments: [
+      { user: 'pinkbunny22', emoji: '🐰', text: '마지막 대사에서 심장 멎는 줄 알았어요ㅠㅠ 왜 이렇게 잘 쓰셨어요', time: '1시간 전', reaction: '💜 24' },
+      { user: 'moonchild_k', emoji: '🌙', text: '민준이가 먼저 고백하는 거 진짜 설레... 작가님 다음 클립도 제발요', time: '1시간 전', reaction: '💜 18' },
+      { user: 'kpop_writer', emoji: '✍️', text: '아니 눈 피하잖아 → 제대로 봐봐 이 흐름 완벽하잖아요??? 소름', time: '30분 전', reaction: '💜 31' },
+      { user: 'fan99', emoji: '🌸', text: '벚꽃 배경 설정 천재다... 계절 감성 제대로예요', time: '15분 전', reaction: '💜 9' },
+    ]
+  },
+  {
+    user: 'moonchild_k', theme: '💔', themeName: 'Angst', mode: '커플링',
+    title: '이별 이후', style: 'sunset', ago: '5시간 전', likes: 89,
+    conversations: [
+      { speaker: 0, name: '지수', text: '...왔어.', sceneBg: '비가 내리는 늦은 밤, 편의점 앞' },
+      { speaker: 1, name: '현우', text: '전화는 왜 안 받았어.' },
+      { speaker: 0, name: '지수', text: '뭐라고 해야 할지 몰라서.' },
+      { speaker: 1, name: '현우', text: '"다 알고 있었어. 그래서 더 힘들었어." 목소리가 흔들렸다.' },
+      { speaker: 0, name: '지수', text: '현우야...', sceneBg: '지수가 우산을 내린다' },
+      { speaker: 1, name: '현우', text: '비 맞잖아. 빨리 들어가.' },
+      { speaker: 0, name: '지수', text: '가지 마. 아직 할 말이 남았어.' },
+    ],
+    comments: [
+      { user: 'starlight_j', emoji: '⭐', text: '비 오는 날 편의점 앞... 작가님 내 심장 다 가져가세요', time: '4시간 전', reaction: '💜 37' },
+      { user: 'fan99', emoji: '🌸', text: '"다 알고 있었어" 이 한 마디에 두 사람 사이 역사가 다 담긴 것 같아서 눈물남', time: '3시간 전', reaction: '💜 29' },
+      { user: 'pinkbunny22', emoji: '🐰', text: '현우가 지수한테 빨리 들어가라고 하면서 못 가는 거 보이잖아요ㅠㅠ', time: '2시간 전', reaction: '💜 44' },
+    ]
+  },
+  {
+    user: 'fan99', theme: '😂', themeName: 'Funny', mode: '유사연',
+    title: '헬기 드립 대환장', style: 'minimal', ago: '1일 전', likes: 67,
+    conversations: [
+      { speaker: 1, name: '태양', text: '너 오늘 왜 이렇게 늦었어. 30분이나 기다렸잖아.', sceneBg: '약속 장소 카페 앞, 태양이 팔짱을 끼고 서 있다' },
+      { speaker: 0, name: '나', text: '미안미안, 지하철이 진짜...' },
+      { speaker: 1, name: '태양', text: '헬기 타고 와도 됐잖아.' },
+      { speaker: 0, name: '나', text: '...응?' },
+      { speaker: 1, name: '태양', text: '야, 방금 그거 아무도 못 봤지? 맞지? 나 방금 뭐라 한 거야', sceneBg: '태양이 자기 입을 손으로 가린다' },
+      { speaker: 0, name: '나', text: '헬기. 헬기 타고 오면 됐잖아. 라고 하셨는데요.' },
+      { speaker: 1, name: '태양', text: '아 몰라 들어가. 어서.', sceneBg: '귀까지 빨개진 채 먼저 문을 열고 들어가버린다' },
+    ],
+    comments: [
+      { user: 'moonchild_k', emoji: '🌙', text: '헬기ㅋㅋㅋㅋㅋㅋ 이 남자 솔직히 좋아서 헬기까지 타고 오라는 거잖아요', time: '22시간 전', reaction: '💜 52' },
+      { user: 'kpop_writer', emoji: '✍️', text: '귀까지 빨개진 거 묘사 ㅠㅠ 너무 귀여워 죽겠다', time: '20시간 전', reaction: '💜 38' },
+      { user: 'starlight_j', emoji: '⭐', text: '아 몰라 들어가 ← 아이돌 특 직접적인 거 못 해서 이러는 거 맞죠?ㅋㅋㅋ', time: '18시간 전', reaction: '💜 61' },
+    ]
+  },
+  {
+    user: 'pinkbunny22', theme: '🌟', themeName: 'Wholesome', mode: '커플링',
+    title: '항상 네 편이야', style: 'fancy', ago: '2일 전', likes: 203,
+    conversations: [
+      { speaker: 0, name: '세진', text: '오늘 무대 진짜 망한 것 같아. 왜 이렇게 실수를 많이 했지.', sceneBg: '공연 후 대기실, 세진이 혼자 앉아 있다' },
+      { speaker: 1, name: '리온', text: '망하긴. 앞줄 팬들 표정 못 봤어? 다 울고 있었는데.' },
+      { speaker: 0, name: '세진', text: '그건 감동받아서가 아니라 너무 안타까워서겠지...' },
+      { speaker: 1, name: '리온', text: '야. 나 봐봐.', sceneBg: '리온이 세진 옆에 앉아 어깨를 잡는다' },
+      { speaker: 0, name: '세진', text: '...왜.' },
+      { speaker: 1, name: '리온', text: '"옆에 있어줘서 다행이야. 없었으면 무너졌을 것 같아." 그리고 잠깐 멈췄다가 — "뭐가 됐든, 난 네 편이야. 항상."' },
+      { speaker: 0, name: '세진', text: '...바보야.', sceneBg: '세진이 고개를 숙인다. 작게 웃는 소리가 들린다.' },
+    ],
+    comments: [
+      { user: 'starlight_j', emoji: '⭐', text: '항상 네 편이야 ← 이 말 때문에 진짜 엉엉 울었어요 나도 이런 사람 하나만...', time: '2일 전', reaction: '💜 88' },
+      { user: 'moonchild_k', emoji: '🌙', text: '세진이 작게 웃는 소리 묘사에서 저도 모르게 미소 지었어요ㅠ 힐링됩니다', time: '2일 전', reaction: '💜 74' },
+      { user: 'fan99', emoji: '🌸', text: '리온이 "야 나 봐봐" 하는 거 심장에 박혔어요 이 사람 분명히 좋아하는 거잖아', time: '1일 전', reaction: '💜 96' },
+      { user: 'kpop_writer', emoji: '✍️', text: '이번 주 클립 투표 무조건 이 클립 찍었어요. 작가님 부디 다음 편도요ㅠㅠ', time: '1일 전', reaction: '💜 43' },
+    ]
+  },
+  {
+    user: 'kpop_writer', theme: '⚡', themeName: 'Action', mode: '커플링',
+    title: '마지막 임무', style: 'dark', ago: '3일 전', likes: 156,
+    conversations: [
+      { speaker: 0, name: '카이', text: '지금 당장 움직여! 시간이 없어!', sceneBg: '폭발 직전의 건물, 경보음이 울린다' },
+      { speaker: 1, name: '도현', text: '카이, 너 팔 다쳤잖아. 나 먼저 가면 안 돼.' },
+      { speaker: 0, name: '카이', text: '괜찮아. 내가 막을게. 너는 먼저 가.' },
+      { speaker: 1, name: '도현', text: '미쳤어? 혼자 어떻게 막아!', sceneBg: '도현이 카이 팔을 잡는다' },
+      { speaker: 0, name: '카이', text: '여기서 포기하면 다 끝이야. 같이 버텨. 네가 있으면 할 수 있어.' },
+      { speaker: 1, name: '도현', text: '...씨. 알았어. 같이 가자. 단 둘 다 살아서 나가는 거야, 알겠어?', sceneBg: '두 사람이 손을 맞잡는다' },
+      { speaker: 0, name: '카이', text: '당연하지. 약속해.' },
+    ],
+    comments: [
+      { user: 'pinkbunny22', emoji: '🐰', text: '손 맞잡는 장면에서 제 손도 같이 쥐어졌어요ㅠ 긴장감 미쳤다', time: '3일 전', reaction: '💜 67' },
+      { user: 'starlight_j', emoji: '⭐', text: '"네가 있으면 할 수 있어" 액션 클립에서 이런 감성 드롭이 나올 줄 몰랐다 작가님 천재', time: '2일 전', reaction: '💜 89' },
+      { user: 'moonchild_k', emoji: '🌙', text: '당연하지 약속해 ← 이 마지막 한 마디로 살아서 나올 거란 확신이 생기는 마법', time: '2일 전', reaction: '💜 72' },
+    ]
+  }
+];
+
+const STYLE_MAP_BG = { dark:'linear-gradient(135deg,#1a1a2e,#0d0d1a)', minimal:'#f4f4f8', fancy:'linear-gradient(135deg,#ffd6e7,#c3aeff,#bae6ff)', sunset:'linear-gradient(135deg,#1f1035,#3d1f5e,#5e2d45)', mint:'linear-gradient(135deg,#0d2b2b,#0a2020)' };
+const STYLE_MAP_COLOR = { dark:'#fff', minimal:'#1a1a1a', fancy:'#2d1a4e', sunset:'#fff', mint:'#a7f3d0' };
+
+let currentClipLoved = false;
+
+function openClip(data) {
+  // Find full clip data
+  const full = CLIP_DATA.find(c => c.title === data.title) || CLIP_DATA[0];
+  const styleData = { bg: STYLE_MAP_BG[full.style] || STYLE_MAP_BG.dark, color: STYLE_MAP_COLOR[full.style] || '#fff' };
+
+  document.getElementById('clip-title-header').textContent = full.title;
+  document.getElementById('clip-theme-header').textContent = full.theme + ' ' + full.themeName;
+
+  // Build conversations HTML
+  let convHtml = '';
+  full.conversations.forEach(conv => {
+    const isRight = conv.speaker === 0;
+    if (conv.sceneBg) {
+      convHtml += `<div class="clip-scene-strip" style="border-color:${styleData.color}30;color:${styleData.color};">— ${conv.sceneBg} —</div>`;
+    }
+    convHtml += `
+      <div class="clip-bubble-row ${isRight ? 'right' : ''}">
+        <div class="clip-bubble-avatar" style="background:${isRight ? 'rgba(139,92,246,.5)' : 'rgba(255,255,255,.1)'};color:${styleData.color};">${conv.name[0]}</div>
+        <div>
+          <div class="clip-bubble-name" style="color:${styleData.color};${isRight ? 'text-align:right' : ''}">${conv.name}</div>
+          <div class="clip-bubble" style="background:${isRight ? 'rgba(139,92,246,.7)' : 'rgba(255,255,255,.13)'};color:${styleData.color};">${conv.text}</div>
+        </div>
+      </div>`;
+  });
+
+  // Build comments HTML
+  let commentsHtml = full.comments.map(c => `
+    <div class="clip-comment">
+      <div class="clip-comment-avatar">${c.emoji}</div>
+      <div class="clip-comment-bubble">
+        <div class="clip-comment-user">@${c.user}</div>
+        <div class="clip-comment-text">${c.text}</div>
+        <div class="clip-comment-time">${c.time} · ${c.reaction}</div>
+      </div>
+    </div>`).join('');
+
+  currentClipLoved = false;
+  document.getElementById('clip-detail-body').innerHTML = `
+    <div class="clip-author-row">
+      <div class="clip-author-avatar">${full.user[0].toUpperCase()}</div>
+      <div>
+        <div class="clip-author-name">@${full.user}</div>
+        <div class="clip-author-meta">${full.themeName} · ${full.mode} · ${full.ago}</div>
+      </div>
+      <button class="clip-love-btn" id="clip-love-btn" onclick="toggleClipLove(${full.likes})">💜 ${full.likes}</button>
+    </div>
+
+    <div class="clip-chat-card">
+      <div class="clip-chat-inner" style="background:${styleData.bg};">
+        <div class="clip-chat-header-row" style="color:${styleData.color};">${full.theme} ${full.themeName} · ${full.mode}</div>
+        <div class="clip-chat-title" style="color:${styleData.color};">${full.title}</div>
+        ${convHtml}
+        <div class="clip-wm" style="color:${styleData.color};">#BunjangGlobal #AU하이라이트</div>
+      </div>
+    </div>
+
+    <div class="clip-stats-row">
+      <div class="clip-stat-chip">💜 ${full.likes} 좋아요</div>
+      <div class="clip-stat-chip">💬 ${full.comments.length} 댓글</div>
+      <div class="clip-stat-chip">🔀 리믹스 가능</div>
+    </div>
+
+    <div class="clip-actions-row">
+      <button class="clip-action-btn" onclick="remixClip()">🔀 리믹스</button>
+      <button class="clip-action-btn" onclick="shareClip('${full.title}')">📤 공유 +5★</button>
+      <button class="clip-action-btn" onclick="voteClip('${full.title}')">🗳 투표</button>
+    </div>
+
+    <div class="clip-comments-title">💬 팬 반응 ${full.comments.length}</div>
+    ${commentsHtml}
+
+    <div class="clip-comment-input-row">
+      <input class="clip-comment-input" placeholder="설레는 장면 남겨봐요 💜" id="clip-comment-input" maxlength="200">
+      <button class="clip-comment-send" onclick="sendClipComment()">전송</button>
+    </div>
+  `;
+
+  goPage('clip');
+}
+
+function closeClip() {
+  const prev = state.currentPage === 'clip' ? 'feed' : 'feed';
+  goPage('feed');
+}
+
+function toggleClipLove(baseCount) {
+  const btn = document.getElementById('clip-love-btn');
+  if (!btn) return;
+  currentClipLoved = !currentClipLoved;
+  if (currentClipLoved) {
+    btn.classList.add('loved');
+    btn.textContent = '💜 ' + (baseCount + 1);
+  } else {
+    btn.classList.remove('loved');
+    btn.textContent = '💜 ' + baseCount;
+  }
+}
+
+function remixClip() { showToast('리믹스 시작! 이 클립을 이어가요 🔀'); setTimeout(() => startStudio(), 700); }
+function shareClip(title) { addMileage(5, '클립 공유'); showToast('공유 완료! +5 마일리지 ⭐'); }
+function voteClip(title) {
+  showToast('🗳 이번 주 최고 설렘 클립 투표 완료! +5★');
+  addMileage(5, '클립 투표');
+}
+
+function sendClipComment() {
+  const input = document.getElementById('clip-comment-input');
+  if (!input || !input.value.trim()) { showToast('댓글을 입력해주세요'); return; }
+  const newComment = `
+    <div class="clip-comment fade-up">
+      <div class="clip-comment-avatar">👤</div>
+      <div class="clip-comment-bubble">
+        <div class="clip-comment-user">@fan_writer</div>
+        <div class="clip-comment-text">${input.value.trim()}</div>
+        <div class="clip-comment-time">방금 전 · 💜 0</div>
+      </div>
+    </div>`;
+  input.insertAdjacentHTML('beforebegin', newComment);
+  input.value = '';
+  showToast('댓글 남겼어요 💜');
 }
 
 function likeCard(btn) {
