@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>채팅형 팬픽 하이라이트 스튜디오 — 와이어프레임</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Arial', sans-serif; background: #f0f0f0; color: #222; }
+
+  /* ── Layout ── */
+  .page { padding: 40px 32px; }
+  h1.doc-title {
+    font-size: 18px; font-weight: 700; color: #333;
+    border-bottom: 2px solid #888; padding-bottom: 10px; margin-bottom: 8px;
+  }
+  .doc-subtitle { font-size: 12px; color: #777; margin-bottom: 40px; }
+
+  /* ── Screen grid ── */
+  .screen-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+  .screen-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+  .screen-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+
+  .section-label {
+    font-size: 13px; font-weight: 700; color: #555;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 16px; margin-top: 40px;
+    padding-left: 8px; border-left: 3px solid #888;
+  }
+
+  /* ── Phone frame ── */
+  .phone {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 #bbb;
+  }
+  .phone-bar {
+    background: #222; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phone-notch {
+    width: 60px; height: 10px; background: #444;
+    border-radius: 0 0 8px 8px;
+  }
+  .phone-screen { padding: 12px; min-height: 480px; }
+  .screen-title-bar {
+    font-size: 10px; font-weight: 700; color: #333;
+    text-align: center; padding: 4px 0 8px;
+    border-bottom: 1px solid #eee; margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── UI atoms ── */
+  .label { font-size: 9px; color: #666; margin-bottom: 3px; font-weight: 600; }
+  .input-box {
+    width: 100%; border: 1px solid #bbb; border-radius: 6px;
+    padding: 6px 8px; font-size: 9px; color: #444; background: #fafafa;
+    margin-bottom: 8px;
+  }
+  .input-box.placeholder { color: #aaa; font-style: italic; }
+  .btn {
+    display: inline-block; border-radius: 6px; font-size: 9px; font-weight: 700;
+    padding: 5px 10px; text-align: center; cursor: default;
+  }
+  .btn-primary { background: #222; color: #fff; }
+  .btn-secondary { background: #fff; color: #222; border: 1.5px solid #222; }
+  .btn-ghost { background: #f4f4f4; color: #555; border: 1px solid #ccc; }
+  .btn-full { display: block; width: 100%; margin-bottom: 6px; }
+  .btn-purple { background: #6c47ff; color: #fff; }
+  .btn-sm { padding: 3px 7px; font-size: 8px; }
+
+  .chip {
+    display: inline-block; border: 1px solid #bbb; border-radius: 20px;
+    padding: 3px 8px; font-size: 8px; color: #444; margin: 2px;
+    background: #f7f7f7;
+  }
+  .chip.active { background: #222; color: #fff; border-color: #222; }
+  .chip.purple { background: #6c47ff; color: #fff; border-color: #6c47ff; }
+
+  .divider { height: 1px; background: #eee; margin: 8px 0; }
+  .badge {
+    display: inline-block; border-radius: 4px; padding: 2px 5px;
+    font-size: 7.5px; font-weight: 700;
+  }
+  .badge-high { background: #222; color: #fff; }
+  .badge-mid { background: #888; color: #fff; }
+
+  .nav-bottom {
+    display: flex; border-top: 1px solid #ddd; margin-top: 10px;
+    background: #fff;
+  }
+  .nav-item {
+    flex: 1; text-align: center; font-size: 7px; color: #888;
+    padding: 6px 0;
+  }
+  .nav-item.active { color: #222; font-weight: 700; }
+  .nav-icon { font-size: 12px; display: block; }
+
+  /* card-like container */
+  .card {
+    border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 8px; margin-bottom: 8px; background: #fafafa;
+  }
+  .card-title { font-size: 9px; font-weight: 700; color: #333; margin-bottom: 4px; }
+  .card-sub { font-size: 8px; color: #888; }
+
+  /* theme cards */
+  .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+  .theme-card {
+    border: 1.5px solid #ddd; border-radius: 8px; padding: 7px 5px;
+    text-align: center; background: #fff; cursor: default;
+  }
+  .theme-card.selected { border-color: #222; background: #f5f5f5; }
+  .theme-emoji { font-size: 16px; display: block; }
+  .theme-name { font-size: 8px; font-weight: 700; color: #333; margin-top: 2px; }
+  .theme-desc { font-size: 7px; color: #888; }
+
+  /* chat bubbles */
+  .bubble-wrap { margin-bottom: 7px; }
+  .bubble-row { display: flex; align-items: flex-end; margin-bottom: 4px; }
+  .bubble-row.right { flex-direction: row-reverse; }
+  .avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #ddd; border: 1px solid #bbb;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; flex-shrink: 0; margin: 0 4px;
+  }
+  .bubble {
+    max-width: 70%; border-radius: 10px; padding: 5px 7px;
+    font-size: 8px; line-height: 1.4;
+  }
+  .bubble.left { background: #f0f0f0; color: #333; border-bottom-left-radius: 2px; }
+  .bubble.right { background: #222; color: #fff; border-bottom-right-radius: 2px; }
+  .bubble-name { font-size: 7px; color: #aaa; margin-bottom: 1px; }
+
+  /* scene-bg strip */
+  .scene-bg {
+    background: #fff8e1; border: 1px dashed #f0c040;
+    border-radius: 6px; padding: 4px 7px; margin: 5px 0;
+    font-size: 7.5px; color: #888; font-style: italic;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .scene-bg::before { content: '🎬'; font-size: 9px; }
+
+  /* AI assist row */
+  .ai-row {
+    display: flex; gap: 4px; align-items: center; margin-top: 3px;
+  }
+  .ai-btn {
+    font-size: 7.5px; padding: 2px 6px; border-radius: 12px;
+    border: 1px solid #6c47ff; color: #6c47ff; background: #fff;
+  }
+
+  /* mileage bar */
+  .mileage-bar {
+    background: #f4f4f4; border-radius: 6px; padding: 5px 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .mileage-label { font-size: 8px; color: #777; }
+  .mileage-val { font-size: 10px; font-weight: 700; color: #222; }
+
+  /* card render preview */
+  .card-render {
+    border: 1.5px solid #333; border-radius: 10px; overflow: hidden;
+    margin-bottom: 8px; background: linear-gradient(135deg,#1a1a2e,#16213e);
+    padding: 10px 8px;
+  }
+  .card-render-header { font-size: 8px; color: #aaa; margin-bottom: 5px; }
+  .card-render-title { font-size: 10px; font-weight: 700; color: #fff; margin-bottom: 7px; }
+  .card-wm { font-size: 7px; color: #555; text-align: right; margin-top: 6px; }
+
+  /* goods strip */
+  .goods-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .goods-card {
+    min-width: 72px; border: 1px solid #e0e0e0; border-radius: 8px;
+    background: #fff; overflow: hidden; flex-shrink: 0;
+  }
+  .goods-img {
+    width: 100%; height: 52px; background: #eee;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .goods-info { padding: 4px; }
+  .goods-price { font-size: 8px; font-weight: 700; color: #222; }
+  .goods-name { font-size: 7px; color: #888; margin-top: 1px; }
+  .goods-actions { display: flex; gap: 3px; padding: 3px 4px; border-top: 1px solid #f0f0f0; }
+
+  /* mode toggle */
+  .mode-toggle {
+    display: flex; border: 1.5px solid #222; border-radius: 8px; overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .mode-opt {
+    flex: 1; text-align: center; font-size: 8px; padding: 5px 0; color: #555;
+  }
+  .mode-opt.active { background: #222; color: #fff; font-weight: 700; }
+
+  /* slider */
+  .slider-wrap { margin-bottom: 8px; }
+  .slider-track {
+    height: 4px; background: #e0e0e0; border-radius: 2px;
+    position: relative; margin: 6px 0;
+  }
+  .slider-fill { height: 100%; background: #222; border-radius: 2px; width: 45%; }
+  .slider-thumb {
+    position: absolute; top: -5px; left: 45%;
+    width: 14px; height: 14px; background: #222; border-radius: 50%;
+    border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  .slider-labels { display: flex; justify-content: space-between; font-size: 7px; color: #aaa; }
+
+  /* progress stepper */
+  .stepper {
+    display: flex; align-items: center; margin-bottom: 12px;
+  }
+  .step {
+    display: flex; flex-direction: column; align-items: center; flex: 1;
+    position: relative;
+  }
+  .step-circle {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid #bbb; background: #fff;
+    font-size: 8px; display: flex; align-items: center; justify-content: center;
+    color: #bbb; z-index: 1;
+  }
+  .step-circle.done { background: #222; border-color: #222; color: #fff; }
+  .step-circle.current { background: #fff; border-color: #222; color: #222; font-weight: 700; }
+  .step-label { font-size: 6.5px; color: #aaa; margin-top: 2px; text-align: center; }
+  .step-label.current { color: #222; font-weight: 700; }
+  .step::after {
+    content: ''; position: absolute; top: 9px; left: 50%; right: -50%;
+    height: 2px; background: #ddd; z-index: 0;
+  }
+  .step:last-child::after { display: none; }
+  .step.done::after { background: #222; }
+
+  /* annotation */
+  .anno {
+    font-size: 8px; color: #999; margin-top: 6px; padding-top: 6px;
+    border-top: 1px dashed #ddd; line-height: 1.5;
+  }
+  .anno strong { color: #555; }
+
+  /* section note */
+  .section-note {
+    font-size: 10px; color: #777; margin-bottom: 24px; max-width: 900px;
+    line-height: 1.6; background: #f8f8f8; border-left: 3px solid #ccc;
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+  }
+
+  /* legend */
+  .legend {
+    display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #666; }
+  .legend-box {
+    width: 14px; height: 14px; border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1 class="doc-title">채팅형 팬픽 하이라이트 스튜디오 — 모바일 와이어프레임</h1>
+  <div class="doc-subtitle">기능명세서 v2026-04-27 기반 · Mobile Web (360px 기준) · Low-fidelity Wireframe</div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box" style="background:#222;"></div> 주요 액션 / 입력</div>
+    <div class="legend-item"><div class="legend-box" style="background:#6c47ff;"></div> AI 보조 기능</div>
+    <div class="legend-item"><div class="legend-box" style="background:#fff8e1;border:1px solid #f0c040;"></div> 장면 배경(선택)</div>
+    <div class="legend-item"><div class="legend-box" style="background:#f4f4f4;border:1px solid #ddd;"></div> 비활성/보조 요소</div>
+    <div class="legend-item"><div class="legend-box" style="background:#fafafa;border:1px dashed #bbb;"></div> 굿즈 노출 영역</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       FLOW 1 · 온보딩 & 홈
+  ══════════════════════════════════════════ -->
+  <div class="section-label">FLOW 1 · 홈 / 온보딩</div>
+  <div class="section-note">신규 유저는 첫 3회 무료 배지 확인 후 바로 제작 시작. 재방문 유저는 내 갤러리 진입 또는 새 하이라이트 제작.</div>
+
+  <div class="screen-grid">
+
+    <!-- S1-1 홈 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">홈 · Fanfic Highlight Studio</div>
+
+          <div style="text-align:center;padding:10px 0 6px;">
+            <div style="font-size:22px;">✨</div>
+            <div style="font-size:11px;font-weight:700;margin:4px 0;">내 최애와의 순간,<br>5분 만에 완성</div>
+            <div style="font-size:8px;color:#888;">채팅형 팬픽 하이라이트 스튜디오</div>
+          </div>
+
+          <div style="background:#f0f0f0;border-radius:8px;padding:6px 8px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span style="font-size:14px;">🎁</span>
+            <div>
+              <div style="font-size:8px;font-weight:700;">첫 3회 무료!</div>
+              <div style="font-size:7px;color:#888;">마일리지 없이 바로 체험하세요</div>
+            </div>
+          </div>
+
+          <div class="btn btn-primary btn-full" style="margin-bottom:6px;">+ 새 하이라이트 만들기</div>
+          <div class="btn btn-secondary btn-full">내 갤러리 보기</div>
+
+          <div class="divider"></div>
+
+          <div style="font-size:8px;font-weight:700;color:#555;margin-bottom:5px;">인기 하이라이트 🔥</div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div class="card-title">봄날의 Fluff ☁️</div>
+                <div class="card-sub">@fan_writer · 유사연 · 5턴</div>
+              </div>
+              <div style="font-size:16px;">💜</div>
+            </div>
+            <div style="font-size:7px;color:#aaa;margin-top:3px;">"이 대화 저장해놨어요ㅠㅠ"</div>
+          </div>
+
+          <div class="nav-bottom">
+            <div class="nav-item active"><span class="nav-icon">🏠</span>홈</div>
+            <div class="nav-item"><span class="nav-icon">✏️</span>만들기</div>
+            <div class="nav-item"><span class="nav-icon">🖼</span>갤러리</div>
+            <div class="nav-item"><span class="nav-icon">👤</span>MY</div>
+          </div>
+        </div>
+      </div>
+      <div class="anno"><strong>S1-1 홈</strong><br>CTA "새 하이라이트 만들기" → 제작 플로우 진입<br>인기 카드는 피드 역할 (Phase 2)</div>
+    </div>
+
+    <!-- S1-2 마일리지 안내 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">마일리지 안내</div>
+
+          <div class="mileage-bar">
+            <div class="mileage-label">내 마일리지</div>
+            <div class="mileage-val">★ 120</div>
+          </div>
+
+          <div style="font-size:9px;font-weight:700;margin-bottom:5px;">적립</div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>찜하기</span><span style="color:#222;font-weight:700;">+3</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>장바구니 담기</span><span style="color:#222;font-weight:700;">+5</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>구매 완료</span><span style="color:#222;font-weight:700;">+50</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>외부 공유</span><span style="color:#222;font-weight:700;">+5</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>리뷰 작성</span><span style="color:#222;font-weight:700;">+10</span></div>
+          </div>
+
+          <div style="font-size:9px;font-weight:700;margin-bottom:5px;margin-top:4px;">소비</div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>채팅 턴 1회 생성(AI)</span><span style="color:#c00;font-weight:700;">-5~10</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>AI 이미지 생성 1장</span><span style="color:#c00;font-weight:700;">-20~30</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:2px 0;"><span>Spicy 테마 이용</span><span style="color:#c00;font-weight:700;">추가 소비</span></div>
+          </div>
+
+          <div class="btn btn-ghost btn-full" style="margin-top:4px;">마일리지 내역 전체 보기</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S1-2 마일리지</strong><br>홈 또는 MY탭에서 접근<br>AI 비용 통제 핵심 UI</div>
+    </div>
+
+    <!-- S1-3 빈 칸 (spacing) -->
+    <div></div>
+    <div></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       FLOW 2 · 제작 설정
+  ══════════════════════════════════════════ -->
+  <div class="section-label">FLOW 2 · 하이라이트 설정 (Step 1–4)</div>
+  <div class="section-note">테마 선택 → 캐릭터 설정 → 모드 & 턴 선택 → 대화 작성 4단계. 스테퍼(진행바)가 항상 상단에 노출.</div>
+
+  <div class="screen-grid">
+
+    <!-- S2-1 테마 선택 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Step 1 · 테마 선택</div>
+          <div class="stepper">
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">테마</div></div>
+            <div class="step"><div class="step-circle">2</div><div class="step-label">캐릭터</div></div>
+            <div class="step"><div class="step-circle">3</div><div class="step-label">모드</div></div>
+            <div class="step"><div class="step-circle">4</div><div class="step-label">대화</div></div>
+            <div class="step"><div class="step-circle">5</div><div class="step-label">카드</div></div>
+          </div>
+
+          <div class="theme-grid">
+            <div class="theme-card selected">
+              <span class="theme-emoji">☁️</span>
+              <div class="theme-name">Fluff</div>
+              <div class="theme-desc">따뜻하고 달콤한</div>
+            </div>
+            <div class="theme-card">
+              <span class="theme-emoji">💔</span>
+              <div class="theme-name">Angst</div>
+              <div class="theme-desc">감정적 갈등</div>
+            </div>
+            <div class="theme-card">
+              <span class="theme-emoji">⚡</span>
+              <div class="theme-name">Action</div>
+              <div class="theme-desc">긴박한 전개</div>
+            </div>
+            <div class="theme-card">
+              <span class="theme-emoji">😂</span>
+              <div class="theme-name">Funny</div>
+              <div class="theme-desc">유쾌한 일상</div>
+            </div>
+            <div class="theme-card">
+              <span class="theme-emoji">🌟</span>
+              <div class="theme-name">Wholesome</div>
+              <div class="theme-desc">뭉클한 순간</div>
+            </div>
+            <div class="theme-card" style="border:1px dashed #ddd;background:#f8f8f8;">
+              <span class="theme-emoji">🔞</span>
+              <div class="theme-name" style="color:#aaa;">Spicy</div>
+              <div class="theme-desc" style="color:#ccc;">연령 인증 필요</div>
+            </div>
+          </div>
+
+          <div style="background:#f0f0f0;border-radius:6px;padding:5px 7px;font-size:7.5px;color:#777;margin-bottom:8px;">
+            선택됨: <strong style="color:#222;">☁️ Fluff</strong> — AI가 따뜻하고 달콤한 톤으로 문장을 추천합니다.
+          </div>
+
+          <div class="btn btn-primary btn-full">다음 → 캐릭터 설정</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S2-1 테마 선택</strong><br>6종 카드 그리드 (Spicy는 연령인증 후 활성화)<br>선택 시 하단에 AI 톤 안내 표시 (1.1.3)</div>
+    </div>
+
+    <!-- S2-2 캐릭터 설정 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Step 2 · 캐릭터 설정</div>
+          <div class="stepper">
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">테마</div></div>
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">캐릭터</div></div>
+            <div class="step current"><div class="step-circle current">3</div><div class="step-label current">모드</div></div>
+            <div class="step"><div class="step-circle">4</div><div class="step-label">대화</div></div>
+            <div class="step"><div class="step-circle">5</div><div class="step-label">카드</div></div>
+          </div>
+
+          <!-- 캐릭터 A -->
+          <div class="card" style="border-color:#333;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:#e0e0e0;border:1.5px dashed #aaa;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">📷</div>
+              <div style="flex:1;">
+                <div class="label">캐릭터 A 이름 <span style="color:#c00;">*</span></div>
+                <div class="input-box">Min-jun</div>
+              </div>
+            </div>
+            <div class="label">성격</div>
+            <div style="margin-bottom:6px;">
+              <span class="chip active">활발함</span>
+              <span class="chip">조용함</span>
+              <span class="chip active">장난스러움</span>
+              <span class="chip">진지함</span>
+            </div>
+            <div class="label">말투</div>
+            <div style="margin-bottom:6px;">
+              <span class="chip">존댓말</span>
+              <span class="chip active">반말</span>
+              <span class="chip">경어</span>
+            </div>
+            <div class="label">관계 (선택)</div>
+            <div class="input-box placeholder">예: 소꿉친구, 오랜 라이벌...</div>
+          </div>
+
+          <!-- 캐릭터 B (커플링 모드 시 표시) -->
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px;">
+            <div style="font-size:8px;color:#888;">캐릭터 B (커플링 모드)</div>
+            <div class="chip" style="font-size:7px;">+ 추가</div>
+          </div>
+
+          <div class="btn btn-primary btn-full">다음 → 모드 & 턴 설정</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S2-2 캐릭터 설정</strong><br>사진 업로드(드래그&드롭/파일선택) (1.3.1)<br>성격·말투 칩 멀티선택 (1.2.2–1.2.3)<br>캐릭터 B는 커플링 모드 선택 시 필수</div>
+    </div>
+
+    <!-- S2-3 모드 & 턴 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Step 3 · 모드 & 턴 설정</div>
+          <div class="stepper">
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">테마</div></div>
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">캐릭터</div></div>
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">모드</div></div>
+            <div class="step current"><div class="step-circle current">4</div><div class="step-label current">대화</div></div>
+            <div class="step"><div class="step-circle">5</div><div class="step-label">카드</div></div>
+          </div>
+
+          <div class="label">대화 모드 선택 <span style="color:#c00;">*</span></div>
+          <div class="mode-toggle" style="margin-bottom:10px;">
+            <div class="mode-opt active">유사연<br><span style="font-size:6.5px;opacity:.8;">You × 캐릭터</span></div>
+            <div class="mode-opt">커플링<br><span style="font-size:6.5px;opacity:.5;">A × B</span></div>
+          </div>
+
+          <div class="label">턴 수 선택 (3 – 10턴) <span style="color:#c00;">*</span></div>
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <div class="slider-fill"></div>
+              <div class="slider-thumb"></div>
+            </div>
+            <div class="slider-labels"><span>3턴</span><span style="font-weight:700;color:#222;">현재: 6턴</span><span>10턴</span></div>
+          </div>
+
+          <div style="background:#f4f4f4;border-radius:6px;padding:6px 8px;margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:8px;align-items:center;">
+              <span>예상 마일리지 소비</span>
+              <span style="font-weight:700;color:#c00;">★ -30~60</span>
+            </div>
+            <div style="font-size:7px;color:#aaa;margin-top:2px;">(AI 추천 미사용 시 0 소비)</div>
+          </div>
+
+          <div class="btn btn-primary btn-full">대화 작성 시작</div>
+          <div class="btn btn-ghost btn-full" style="margin-top:4px;">← 캐릭터 수정</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S2-3 모드 & 턴</strong><br>모드 토글 (1.4.1) · 슬라이더 (1.5.1)<br>마일리지 예상치 실시간 표시 (1.5.2)</div>
+    </div>
+
+    <!-- S2-4 대화 작성 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Step 4 · 대화 작성</div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-size:8px;color:#888;">☁️ Fluff · 유사연 · 6턴</div>
+            <div style="font-size:8px;"><span style="color:#222;font-weight:700;">3</span><span style="color:#aaa;">/6턴</span></div>
+          </div>
+
+          <!-- 완성된 턴들 -->
+          <div class="bubble-wrap">
+            <div class="bubble-row right">
+              <div class="avatar">나</div>
+              <div>
+                <div class="bubble-name" style="text-align:right;">나</div>
+                <div class="bubble right">오늘 연습 끝나고 뭐해?</div>
+              </div>
+            </div>
+            <div class="scene-bg">카페 앞 골목, 늦은 오후</div>
+            <div class="bubble-row left">
+              <div class="avatar" style="background:#d4e8ff;">M</div>
+              <div>
+                <div class="bubble-name">Min-jun</div>
+                <div class="bubble left">왜? 같이 가려고? 😏</div>
+              </div>
+            </div>
+            <div class="bubble-row right">
+              <div class="avatar">나</div>
+              <div>
+                <div class="bubble right">아니, 그냥... 궁금해서.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 현재 입력 턴 -->
+          <div style="font-size:8px;color:#555;font-weight:700;margin-bottom:4px;">Turn 4 · Min-jun 대사</div>
+          <textarea class="input-box" rows="2" style="resize:none;font-family:Arial;font-size:8px;" placeholder="대사를 직접 입력하세요... (최대 500자)"></textarea>
+          <div class="ai-row">
+            <div class="ai-btn">✨ AI 추천</div>
+            <div class="ai-btn">✏️ 다듬기</div>
+            <div style="font-size:7px;color:#aaa;margin-left:auto;">★ -5 소비</div>
+          </div>
+
+          <!-- AI 추천 결과 (표시 상태) -->
+          <div style="background:#f0edff;border:1px solid #c0b0ff;border-radius:6px;padding:6px;margin-top:5px;font-size:8px;color:#333;">
+            <div style="font-size:7px;color:#6c47ff;font-weight:700;margin-bottom:3px;">✨ AI 추천 대사</div>
+            "이렇게 솔직하면 어쩌라고." — 낮은 목소리로
+            <div style="display:flex;gap:4px;margin-top:4px;">
+              <div class="btn btn-sm" style="background:#6c47ff;color:#fff;">채택</div>
+              <div class="btn btn-sm btn-ghost">다른 추천</div>
+              <div class="btn btn-sm btn-ghost">직접 편집</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="anno"><strong>S2-4 대화 작성</strong><br>턴별 직접 입력 필수 (1.6.1) · AI 추천 선택적 (1.7)<br>장면 배경 중간 삽입 (1.6.1) · AI 추천 채택/거절 (1.7.3)</div>
+    </div>
+
+  </div><!-- /screen-grid -->
+
+
+  <!-- ══════════════════════════════════════════
+       FLOW 3 · 카드 생성 & 공유
+  ══════════════════════════════════════════ -->
+  <div class="section-label">FLOW 3 · 카드 생성 / 공유 / 굿즈</div>
+  <div class="section-note">대화 완성 후 카드 스타일 선택 → 렌더링 미리보기 → 공개/비공개 설정 → 저장·공유. 하단에 굿즈 간접 노출.</div>
+
+  <div class="screen-grid">
+
+    <!-- S3-1 카드 스타일 선택 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Step 5 · 카드 스타일</div>
+          <div class="stepper">
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">테마</div></div>
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">캐릭터</div></div>
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">모드</div></div>
+            <div class="step done"><div class="step-circle done">✓</div><div class="step-label">대화</div></div>
+            <div class="step current"><div class="step-circle current">5</div><div class="step-label current">카드</div></div>
+          </div>
+
+          <div class="label">하이라이트 제목</div>
+          <div class="input-box placeholder">예: 봄날의 고백</div>
+
+          <div class="label" style="margin-top:2px;">카드 스타일 선택</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;">
+            <div style="border:2px solid #222;border-radius:6px;padding:5px;text-align:center;background:#1a1a2e;">
+              <div style="font-size:7px;color:#fff;font-weight:700;">다크</div>
+              <div style="font-size:6.5px;color:#888;">선택됨</div>
+            </div>
+            <div style="border:1px solid #ddd;border-radius:6px;padding:5px;text-align:center;background:#fff;">
+              <div style="font-size:7px;color:#333;font-weight:700;">미니멀</div>
+              <div style="font-size:6.5px;color:#aaa;">흰 배경</div>
+            </div>
+            <div style="border:1px solid #ddd;border-radius:6px;padding:5px;text-align:center;background:linear-gradient(135deg,#ffd6e7,#c3aeff);">
+              <div style="font-size:7px;color:#333;font-weight:700;">팬시</div>
+              <div style="font-size:6.5px;color:#555;">파스텔</div>
+            </div>
+          </div>
+
+          <div class="label">공개 설정</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;background:#f4f4f4;border-radius:6px;padding:5px 8px;">
+            <div style="flex:1;font-size:8px;">
+              <div style="font-weight:700;">비공개 (기본)</div>
+              <div style="color:#aaa;font-size:7px;">서치 방지 — 나만 볼 수 있어요</div>
+            </div>
+            <div style="width:28px;height:16px;background:#222;border-radius:8px;position:relative;">
+              <div style="width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;"></div>
+            </div>
+          </div>
+
+          <div class="btn btn-primary btn-full">카드 렌더링 →</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S3-1 카드 스타일</strong><br>제목 입력 (2.1.3) · 스타일 3–5종 (2.2.1)<br>공개/비공개 토글, 기본값=비공개 (2.3.1)</div>
+    </div>
+
+    <!-- S3-2 카드 렌더링 미리보기 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">카드 미리보기 & 저장</div>
+
+          <!-- 렌더링된 카드 -->
+          <div class="card-render">
+            <div class="card-render-header">☁️ Fluff · 유사연 · Min-jun</div>
+            <div class="card-render-title">봄날의 고백</div>
+            <div style="display:flex;gap:3px;align-items:flex-end;margin-bottom:3px;">
+              <div style="width:16px;height:16px;border-radius:50%;background:#d4e8ff;border:1px solid #aaa;display:flex;align-items:center;justify-content:center;font-size:7px;">M</div>
+              <div style="background:rgba(255,255,255,.1);border-radius:6px;padding:3px 5px;font-size:7.5px;color:#eee;">"이렇게 솔직하면 어쩌라고."</div>
+            </div>
+            <div style="display:flex;gap:3px;align-items:flex-end;justify-content:flex-end;margin-bottom:3px;">
+              <div style="background:#6c47ff;border-radius:6px;padding:3px 5px;font-size:7.5px;color:#fff;">그럼 어쩔 건데.</div>
+              <div style="width:16px;height:16px;border-radius:50%;background:#eee;border:1px solid #aaa;display:flex;align-items:center;justify-content:center;font-size:7px;">나</div>
+            </div>
+            <div class="card-wm">#BunjangGlobal #팬픽하이라이트<br>globalbunjang.com</div>
+          </div>
+
+          <div style="display:flex;gap:5px;margin-bottom:8px;">
+            <div class="btn btn-primary" style="flex:1;">⬇ 저장 (PNG)</div>
+            <div class="btn btn-secondary" style="flex:1;">🖼 갤러리 저장</div>
+          </div>
+
+          <div style="font-size:8px;font-weight:700;margin-bottom:5px;">SNS 공유</div>
+          <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;">
+            <div class="btn btn-ghost btn-sm">𝕏 X</div>
+            <div class="btn btn-ghost btn-sm">▶ TikTok</div>
+            <div class="btn btn-ghost btn-sm">🔴 Reddit</div>
+            <div class="btn btn-ghost btn-sm">📷 IG</div>
+          </div>
+
+          <div style="font-size:7.5px;color:#aaa;background:#f9f9f9;border-radius:4px;padding:4px 6px;">
+            공유 시 자동 포함: <strong style="color:#555;">#BunjangGlobal #팬픽하이라이트</strong> + 링크
+          </div>
+        </div>
+      </div>
+      <div class="anno"><strong>S3-2 카드 미리보기</strong><br>렌더링 결과 확인 (2.1) · PNG 다운로드 (2.4.1)<br>SNS 원클릭 공유 (2.5.1) · 워터마크 자동 삽입 (2.6.2)</div>
+    </div>
+
+    <!-- S3-3 굿즈 노출 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">하이라이트 완성 페이지</div>
+
+          <div style="text-align:center;padding:8px 0;">
+            <div style="font-size:16px;">🎉</div>
+            <div style="font-size:10px;font-weight:700;margin:3px 0;">하이라이트 완성!</div>
+            <div style="font-size:8px;color:#888;">공유하면 +5 마일리지</div>
+          </div>
+
+          <!-- 미니 카드 썸네일 -->
+          <div style="border:1px solid #333;border-radius:8px;background:#1a1a2e;padding:6px;margin-bottom:10px;text-align:center;">
+            <div style="font-size:8px;color:#aaa;">봄날의 고백 · ☁️ Fluff</div>
+            <div style="font-size:7px;color:#555;margin-top:2px;">#BunjangGlobal</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 굿즈 노출 영역 -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-size:8px;font-weight:700;color:#555;">Min-jun 관련 인기 굿즈</div>
+            <div style="font-size:7px;color:#888;">전체보기 →</div>
+          </div>
+
+          <div class="goods-strip">
+            <div class="goods-card">
+              <div class="goods-img">🃏</div>
+              <div class="goods-info">
+                <div class="goods-price">₩ 8,500</div>
+                <div class="goods-name">포토카드 A형</div>
+              </div>
+              <div class="goods-actions">
+                <div class="btn btn-sm btn-ghost" style="flex:1;">♡</div>
+                <div class="btn btn-sm btn-primary" style="flex:1;">담기</div>
+              </div>
+            </div>
+            <div class="goods-card">
+              <div class="goods-img">💿</div>
+              <div class="goods-info">
+                <div class="goods-price">₩ 22,000</div>
+                <div class="goods-name">앨범 미개봉</div>
+              </div>
+              <div class="goods-actions">
+                <div class="btn btn-sm btn-ghost" style="flex:1;">♡</div>
+                <div class="btn btn-sm btn-primary" style="flex:1;">담기</div>
+              </div>
+            </div>
+            <div class="goods-card">
+              <div class="goods-img">📸</div>
+              <div class="goods-info">
+                <div class="goods-price">₩ 15,000</div>
+                <div class="goods-name">생일 슬로건</div>
+              </div>
+              <div class="goods-actions">
+                <div class="btn btn-sm btn-ghost" style="flex:1;">♡</div>
+                <div class="btn btn-sm btn-primary" style="flex:1;">담기</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:7px;color:#bbb;margin-top:6px;text-align:center;">찜/담기 시 마일리지 +3~5 적립!</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S3-3 굿즈 노출</strong><br>채팅 외부 하단 간접 노출 (3.1) · 몰입 방해 최소화<br>찜(3.3) · 장바구니(3.4) · 클릭 추적 (3.2.2)</div>
+    </div>
+
+    <!-- S3-4 내 갤러리 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">내 갤러리</div>
+
+          <div style="display:flex;gap:4px;margin-bottom:8px;">
+            <div class="chip active">전체</div>
+            <div class="chip">Fluff</div>
+            <div class="chip">Angst</div>
+            <div class="chip">공개</div>
+            <div class="chip">비공개</div>
+          </div>
+
+          <!-- 갤러리 아이템 -->
+          <div class="card" style="display:flex;gap:7px;align-items:center;">
+            <div style="width:40px;height:40px;border-radius:6px;background:#1a1a2e;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;">☁️</div>
+            <div style="flex:1;">
+              <div class="card-title" style="font-size:8.5px;">봄날의 고백</div>
+              <div class="card-sub">Fluff · 유사연 · 6턴 · 비공개</div>
+              <div style="font-size:7px;color:#aaa;margin-top:1px;">2026.04.28</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div class="btn btn-sm btn-ghost">공유</div>
+              <div class="btn btn-sm btn-ghost">편집</div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;gap:7px;align-items:center;">
+            <div style="width:40px;height:40px;border-radius:6px;background:#2e1a1a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;">💔</div>
+            <div style="flex:1;">
+              <div class="card-title" style="font-size:8.5px;">이별 이후</div>
+              <div class="card-sub">Angst · 커플링 · 8턴 · 공개</div>
+              <div style="font-size:7px;color:#aaa;margin-top:1px;">2026.04.25</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div class="btn btn-sm btn-ghost">공유</div>
+              <div class="btn btn-sm btn-ghost">편집</div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;gap:7px;align-items:center;opacity:.5;">
+            <div style="width:40px;height:40px;border-radius:6px;background:#f0f0f0;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;">😂</div>
+            <div style="flex:1;">
+              <div class="card-title" style="font-size:8.5px;">헬기 드립</div>
+              <div class="card-sub">Funny · 유사연 · 3턴 · 비공개</div>
+            </div>
+          </div>
+
+          <div class="btn btn-primary btn-full" style="margin-top:6px;">+ 새 하이라이트</div>
+
+          <div class="nav-bottom">
+            <div class="nav-item"><span class="nav-icon">🏠</span>홈</div>
+            <div class="nav-item"><span class="nav-icon">✏️</span>만들기</div>
+            <div class="nav-item active"><span class="nav-icon">🖼</span>갤러리</div>
+            <div class="nav-item"><span class="nav-icon">👤</span>MY</div>
+          </div>
+        </div>
+      </div>
+      <div class="anno"><strong>S3-4 내 갤러리</strong><br>플랫폼 내 갤러리 저장 (2.4.2) · 필터링 · 재공유<br>공개/비공개 상태 표시 및 수정 (2.3.2)</div>
+    </div>
+
+  </div><!-- /screen-grid -->
+
+
+  <!-- ══════════════════════════════════════════
+       FLOW 4 · 에지 케이스 & 추가 화면
+  ══════════════════════════════════════════ -->
+  <div class="section-label">FLOW 4 · 에지 케이스 / 보조 화면</div>
+  <div class="section-note">마일리지 부족, AI 문장 다듬기 팝업, 연령인증(Spicy), 하이라이트 공개 피드(Phase 2) 화면.</div>
+
+  <div class="screen-grid">
+
+    <!-- S4-1 마일리지 부족 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">마일리지 부족 모달</div>
+
+          <div style="background:#fff;border:1.5px solid #333;border-radius:10px;padding:12px;margin-top:30px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:6px;">⭐</div>
+            <div style="font-size:10px;font-weight:700;margin-bottom:4px;">마일리지가 부족해요</div>
+            <div style="font-size:8px;color:#888;margin-bottom:10px;">AI 추천 1회에 ★5~10 필요<br>현재 보유: ★2</div>
+            <div class="divider"></div>
+            <div style="font-size:8px;font-weight:700;margin:6px 0 4px;">빠르게 충전하는 방법</div>
+            <div style="font-size:8px;color:#555;text-align:left;">
+              <div style="padding:2px 0;">• 관련 굿즈 찜하기 <strong>+3 ★</strong></div>
+              <div style="padding:2px 0;">• 장바구니 담기 <strong>+5 ★</strong></div>
+              <div style="padding:2px 0;">• 하이라이트 외부 공유 <strong>+5 ★</strong></div>
+            </div>
+            <div class="btn btn-primary btn-full" style="margin-top:8px;">관련 굿즈 보러가기</div>
+            <div class="btn btn-ghost btn-full" style="margin-top:4px;">직접 작성으로 진행</div>
+          </div>
+        </div>
+      </div>
+      <div class="anno"><strong>S4-1 마일리지 부족</strong><br>AI 사용 차단 대신 굿즈/공유로 자연 유도<br>비용 통제 + 바이럴 루프 동시 설계</div>
+    </div>
+
+    <!-- S4-2 문장 다듬기 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">AI 문장 다듬기</div>
+
+          <div style="background:#fafafa;border-radius:6px;padding:6px 8px;margin-bottom:8px;">
+            <div style="font-size:7.5px;color:#888;margin-bottom:3px;">원문</div>
+            <div style="font-size:9px;color:#333;">"아 그러니까 내 말은 그냥 보고싶었다고."</div>
+          </div>
+
+          <div style="font-size:8px;font-weight:700;margin-bottom:5px;">✨ AI 개선 제안 (1.8.2)</div>
+
+          <div class="card" style="border-color:#6c47ff;">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+              <div class="badge badge-high">1</div>
+              <div style="font-size:7.5px;color:#6c47ff;font-weight:700;">톤 유지 + 자연스럽게</div>
+            </div>
+            <div style="font-size:8.5px;color:#333;">"그냥... 보고 싶었어."</div>
+            <div class="btn btn-sm" style="background:#6c47ff;color:#fff;margin-top:5px;">이걸로 쓸게요</div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+              <div class="badge badge-mid">2</div>
+              <div style="font-size:7.5px;color:#888;">더 감정적으로</div>
+            </div>
+            <div style="font-size:8.5px;color:#333;">"솔직히 말하면... 그냥 네가 보고 싶었거든."</div>
+            <div class="btn btn-sm btn-ghost" style="margin-top:5px;">이걸로 쓸게요</div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+              <div class="badge badge-mid">3</div>
+              <div style="font-size:7.5px;color:#888;">간결하게</div>
+            </div>
+            <div style="font-size:8.5px;color:#333;">"보고 싶었어. 그게 다야."</div>
+            <div class="btn btn-sm btn-ghost" style="margin-top:5px;">이걸로 쓸게요</div>
+          </div>
+
+          <div class="btn btn-ghost btn-full" style="margin-top:4px;">직접 편집하기</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S4-2 문장 다듬기</strong><br>AI가 1~3개 개선안 제시 (1.8.2)<br>채택 또는 직접 편집 (1.8.3)</div>
+    </div>
+
+    <!-- S4-3 Spicy 연령인증 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Spicy 테마 연령 인증</div>
+
+          <div style="text-align:center;padding:20px 0 12px;">
+            <div style="font-size:24px;">🔞</div>
+            <div style="font-size:11px;font-weight:700;margin:6px 0;">성인 인증이 필요해요</div>
+            <div style="font-size:8px;color:#888;line-height:1.5;">Spicy 테마는 만 18세 이상만<br>이용할 수 있어요.</div>
+          </div>
+
+          <div style="background:#f4f4f4;border-radius:8px;padding:8px;margin-bottom:10px;">
+            <div style="font-size:8px;font-weight:700;margin-bottom:4px;">인증 방법</div>
+            <div class="btn btn-primary btn-full" style="margin-bottom:4px;">본인 인증하기 (통신사)</div>
+            <div class="btn btn-secondary btn-full">신용카드로 인증</div>
+          </div>
+
+          <div style="font-size:7.5px;color:#aaa;text-align:center;line-height:1.5;">
+            인증 후 Spicy 테마 이용 시<br>마일리지 추가 소비가 발생해요.
+          </div>
+
+          <div class="btn btn-ghost btn-full" style="margin-top:10px;">← 다른 테마 선택</div>
+        </div>
+      </div>
+      <div class="anno"><strong>S4-3 Spicy 연령인증</strong><br>게이팅 및 마일리지 추가 소비 안내<br>리스크 관리 대응 (7. 리스크)</div>
+    </div>
+
+    <!-- S4-4 Phase2 피드 미리보기 -->
+    <div>
+      <div class="phone">
+        <div class="phone-bar"><div class="phone-notch"></div></div>
+        <div class="phone-screen">
+          <div class="screen-title-bar">Highlight Feed (Phase 2)</div>
+
+          <div style="background:#fff3cd;border-radius:6px;padding:5px 8px;margin-bottom:8px;font-size:7.5px;color:#856404;display:flex;gap:4px;align-items:center;">
+            <span>⚠</span> Phase 2 기능 — MVP 미포함
+          </div>
+
+          <div style="display:flex;gap:4px;margin-bottom:6px;overflow-x:auto;">
+            <div class="chip active">인기</div>
+            <div class="chip">최신</div>
+            <div class="chip">Fluff</div>
+            <div class="chip">Angst</div>
+            <div class="chip">주간 투표 🔥</div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;gap:5px;align-items:center;margin-bottom:5px;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#d4e8ff;display:flex;align-items:center;justify-content:center;font-size:8px;">👤</div>
+              <div>
+                <div style="font-size:8px;font-weight:700;">@fan_writer</div>
+                <div style="font-size:7px;color:#aaa;">Fluff · 유사연</div>
+              </div>
+              <div style="margin-left:auto;font-size:8px;">💜 142</div>
+            </div>
+            <div style="background:#1a1a2e;border-radius:6px;padding:6px;font-size:8px;color:#eee;">봄날의 고백</div>
+            <div style="display:flex;gap:4px;margin-top:5px;">
+              <div class="btn btn-sm btn-ghost">💜 좋아요</div>
+              <div class="btn btn-sm btn-ghost">🔀 리믹스</div>
+              <div class="btn btn-sm btn-ghost">공유</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;gap:5px;align-items:center;margin-bottom:5px;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#ffd6e7;display:flex;align-items:center;justify-content:center;font-size:8px;">👤</div>
+              <div>
+                <div style="font-size:8px;font-weight:700;">@moonchild_k</div>
+                <div style="font-size:7px;color:#aaa;">Angst · 커플링</div>
+              </div>
+              <div style="margin-left:auto;font-size:8px;">💜 89</div>
+            </div>
+            <div style="background:#2e1a1a;border-radius:6px;padding:6px;font-size:8px;color:#eee;">이별 이후</div>
+            <div style="display:flex;gap:4px;margin-top:5px;">
+              <div class="btn btn-sm btn-ghost">💜 좋아요</div>
+              <div class="btn btn-sm btn-ghost">🔀 리믹스</div>
+              <div class="btn btn-sm btn-ghost">공유</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="anno"><strong>S4-4 피드 (Phase 2)</strong><br>Highlight Feed + 주간 투표 + 리믹스<br>MVP 이후 바이럴 확인 후 구현</div>
+    </div>
+
+  </div><!-- /screen-grid -->
+
+
+  <!-- ══════════════════════════════════════════
+       유저 플로우 요약 다이어그램
+  ══════════════════════════════════════════ -->
+  <div class="section-label">유저 플로우 요약</div>
+  <div style="background:#fff;border:1.5px solid #333;border-radius:10px;padding:16px;margin-bottom:40px;max-width:960px;">
+    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+
+      <div style="text-align:center;padding:8px 10px;">
+        <div style="background:#f0f0f0;border:1.5px solid #bbb;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#555;">홈 진입</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S1-1</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#222;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#fff;">테마 선택</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S2-1</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#222;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#fff;">캐릭터 설정</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S2-2</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#222;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#fff;">모드 & 턴</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S2-3</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#222;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#fff;">대화 작성</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S2-4</div>
+        <div style="font-size:7px;color:#6c47ff;">AI 보조 선택</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#222;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#fff;">카드 스타일</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S3-1</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#222;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#fff;">저장 & 공유</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S3-2</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#f4f4f4;border:1.5px dashed #aaa;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#555;">굿즈 탐색</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">S3-3</div>
+        <div style="font-size:7px;color:#888;">간접 노출</div>
+      </div>
+      <div style="font-size:14px;color:#bbb;">→</div>
+
+      <div style="text-align:center;padding:8px 6px;">
+        <div style="background:#f0f0f0;border:1.5px solid #bbb;border-radius:8px;padding:6px 10px;font-size:9px;font-weight:700;color:#555;">재방문<br>/ 재제작</div>
+        <div style="font-size:7.5px;color:#aaa;margin-top:2px;">리텐션</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;">
+      <div style="font-size:8px;color:#555;"><strong>바이럴 루프:</strong> 카드 공유 → SNS 유입 → 체험 → 재공유</div>
+      <div style="font-size:8px;color:#555;"><strong>비용 통제:</strong> 첫 3회 무료 → 마일리지 → 굿즈 찜/구매로 충전</div>
+      <div style="font-size:8px;color:#555;"><strong>MVP 제외:</strong> AI 이미지 생성 · Highlight Feed · Remix · 컴백 연동 프리셋</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       화면 목록 인덱스
+  ══════════════════════════════════════════ -->
+  <div class="section-label">화면 목록 인덱스</div>
+  <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;max-width:800px;margin-bottom:40px;">
+    <table style="width:100%;border-collapse:collapse;font-size:9px;">
+      <thead>
+        <tr style="background:#f4f4f4;">
+          <th style="padding:6px 10px;text-align:left;border-bottom:1px solid #e0e0e0;">ID</th>
+          <th style="padding:6px 10px;text-align:left;border-bottom:1px solid #e0e0e0;">화면명</th>
+          <th style="padding:6px 10px;text-align:left;border-bottom:1px solid #e0e0e0;">관련 기능(기명세)</th>
+          <th style="padding:6px 10px;text-align:left;border-bottom:1px solid #e0e0e0;">MVP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S1-1</td><td style="padding:5px 10px;">홈</td><td style="padding:5px 10px;">진입점, 마일리지 배지</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S1-2</td><td style="padding:5px 10px;">마일리지 안내</td><td style="padding:5px 10px;">적립/소비 구조 안내</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S2-1</td><td style="padding:5px 10px;">테마 선택</td><td style="padding:5px 10px;">1.1.1–1.1.3</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S2-2</td><td style="padding:5px 10px;">캐릭터 설정</td><td style="padding:5px 10px;">1.2.1–1.3.3</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S2-3</td><td style="padding:5px 10px;">모드 & 턴 설정</td><td style="padding:5px 10px;">1.4.1–1.5.2</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S2-4</td><td style="padding:5px 10px;">대화 작성 (+ AI 보조)</td><td style="padding:5px 10px;">1.6.1–1.8.3</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S3-1</td><td style="padding:5px 10px;">카드 스타일 & 공개설정</td><td style="padding:5px 10px;">2.2.1–2.3.2</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S3-2</td><td style="padding:5px 10px;">카드 미리보기 & 공유</td><td style="padding:5px 10px;">2.1.1–2.6.3</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S3-3</td><td style="padding:5px 10px;">굿즈 노출 & 탐색</td><td style="padding:5px 10px;">3.1.1–3.4.1</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S3-4</td><td style="padding:5px 10px;">내 갤러리</td><td style="padding:5px 10px;">2.4.2, 2.3.2</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S4-1</td><td style="padding:5px 10px;">마일리지 부족 모달</td><td style="padding:5px 10px;">마일리지 시스템</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S4-2</td><td style="padding:5px 10px;">AI 문장 다듬기 팝업</td><td style="padding:5px 10px;">1.8.1–1.8.3</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 10px;">S4-3</td><td style="padding:5px 10px;">Spicy 연령인증</td><td style="padding:5px 10px;">리스크 관리</td><td style="padding:5px 10px;"><span class="badge badge-high">✓</span></td></tr>
+        <tr><td style="padding:5px 10px;">S4-4</td><td style="padding:5px 10px;">Highlight Feed</td><td style="padding:5px 10px;">Phase 2</td><td style="padding:5px 10px;"><span class="badge badge-mid">Phase 2</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="font-size:9px;color:#bbb;padding-bottom:40px;">
+    채팅형 팬픽 하이라이트 스튜디오 와이어프레임 · 기능명세서 2026-04-27 기반 · Mobile Web 360px · Low-fidelity
+  </div>
+
+</div>
+</body>
+</html>
