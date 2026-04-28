@@ -3174,53 +3174,112 @@ function confirmWithdraw() {
 /* ═══════════════════════════════════════════
    FEED VOTE TAB
 ═══════════════════════════════════════════ */
+// 클립별 투표 수 (VOTE_DATA에 없는 클립도 포함)
+const WEEK_VOTE_COUNTS = {};
+CLIP_DATA.forEach(c => {
+  const v = VOTE_DATA.find(d => d.title === c.title);
+  WEEK_VOTE_COUNTS[c.title] = v ? v.votes : Math.floor(Math.random() * 20 + 5);
+});
+
+if (state.weekVoteSelected === undefined) state.weekVoteSelected = -1;
+if (state.weekVoteSubmitted === undefined) state.weekVoteSubmitted = false;
+
 function renderVoteTab() {
   const list = document.getElementById('feed-list');
-  const total = VOTE_DATA.reduce((s,v) => s+v.votes, 0);
+  const total = Object.values(WEEK_VOTE_COUNTS).reduce((s, v) => s + v, 0);
+  const maxVotes = Math.max(...Object.values(WEEK_VOTE_COUNTS));
+  const submitted = state.weekVoteSubmitted;
 
   list.innerHTML = `
     <div style="background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(236,72,153,.08));border:1px solid rgba(139,92,246,.3);border-radius:var(--radius);padding:14px;margin-bottom:16px;">
       <div style="font-size:13px;font-weight:800;margin-bottom:4px;">🗳 이번 주 최고 설렘 클립 투표</div>
-      <div style="font-size:11px;color:var(--sub);">투표하고 +5 마일리지 받아요! · 마감 D-3</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:4px;">총 ${total}표 참여 중</div>
+      ${submitted
+        ? `<div style="font-size:11px;color:#4ade80;font-weight:700;">✅ 투표 완료 · +5 마일리지 적립!</div>
+           <div style="font-size:10px;color:var(--muted);margin-top:3px;">총 ${total}명 참여 중 · 마감 D-3</div>`
+        : `<div style="font-size:11px;color:var(--sub);">투표하고 +5 마일리지 받아요! · 마감 D-3</div>
+           <div style="font-size:10px;color:var(--muted);margin-top:3px;">총 ${total}명 참여 중</div>`
+      }
     </div>
+
     ${CLIP_DATA.map((clip, i) => {
-      const voteItem = VOTE_DATA.find(v => v.title === clip.title);
-      const votes = voteItem ? voteItem.votes : Math.floor(Math.random()*20+5);
-      const pct = Math.round(votes / total * 100);
-      const styleData = { bg: STYLE_MAP_BG[clip.style] || STYLE_MAP_BG.dark, color: STYLE_MAP_COLOR[clip.style] || '#fff' };
+      const votes = WEEK_VOTE_COUNTS[clip.title] || 0;
+      const pct = total > 0 ? Math.round(votes / total * 100) : 0;
+      const isTop = votes === maxVotes;
       const isSelected = state.weekVoteSelected === i;
+      const isMyVote = submitted && isSelected;
+
       return `
-        <div onclick="selectWeekVote(${i})" style="
-          background:var(--card-bg);border:2px solid ${isSelected?'var(--accent)':'var(--border)'};
-          border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:.2s;
-          ${isSelected?'box-shadow:0 0 0 1px var(--accent);':''}">
-          <div style="position:relative;height:100px;overflow:hidden;">
-            ${clip.img ? `<img src="${clip.img}" style="width:100%;height:100%;object-fit:cover;object-position:top;">` :
-              `<div style="width:100%;height:100%;background:${styleData.bg};"></div>`}
-            <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.65) 0%,rgba(0,0,0,.2) 100%);"></div>
-            <div style="position:absolute;inset:0;padding:12px;display:flex;align-items:center;gap:12px;">
-              <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${isSelected?'var(--accent)':'rgba(255,255,255,.5)'};background:${isSelected?'var(--accent)':'rgba(0,0,0,.3)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                ${isSelected?'<span style="color:#fff;font-size:11px;">✓</span>':''}
+        <div id="wvote-card-${i}" onclick="selectWeekVote(${i})" style="
+          background:var(--card-bg);
+          border:2px solid ${submitted && isTop ? 'var(--accent)' : isSelected ? 'var(--accent)' : 'var(--border)'};
+          border-radius:var(--radius);margin-bottom:10px;overflow:hidden;
+          cursor:${submitted?'default':'pointer'};transition:.2s;
+          ${(isSelected && !submitted) || (submitted && isTop) ? 'box-shadow:0 0 0 1px var(--accent);' : ''}">
+
+          <!-- 클립 이미지 + 정보 -->
+          <div style="position:relative;height:90px;overflow:hidden;">
+            ${clip.img
+              ? `<img src="${clip.img}" style="width:100%;height:100%;object-fit:cover;object-position:top;">`
+              : `<div style="width:100%;height:100%;background:${STYLE_MAP_BG[clip.style]||STYLE_MAP_BG.dark};"></div>`}
+            <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.7) 0%,rgba(0,0,0,.15) 100%);"></div>
+            <div style="position:absolute;inset:0;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+              <!-- 라디오/결과 아이콘 -->
+              <div style="width:22px;height:22px;border-radius:50%;flex-shrink:0;
+                border:2px solid ${isSelected ? 'var(--accent)' : 'rgba(255,255,255,.45)'};
+                background:${isSelected ? 'var(--accent)' : 'rgba(0,0,0,.3)'};
+                display:flex;align-items:center;justify-content:center;">
+                ${isMyVote ? '<span style="color:#fff;font-size:10px;">✓</span>'
+                  : submitted && isTop ? '<span style="font-size:10px;">👑</span>'
+                  : isSelected ? '<span style="color:#fff;font-size:10px;">✓</span>' : ''}
               </div>
-              <div>
-                <div style="font-size:13px;font-weight:800;color:#fff;">${clip.theme} ${clip.title}</div>
-                <div style="font-size:10px;color:rgba(255,255,255,.7);">@${clip.user} · ${clip.themeName}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:800;color:#fff;
+                  ${submitted && isTop ? 'color:#e9d5ff;' : ''}">
+                  ${clip.theme} ${clip.title}
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,.65);">@${clip.user} · ${clip.themeName}</div>
               </div>
-              <div style="margin-left:auto;text-align:right;">
-                <div style="font-size:11px;color:rgba(255,255,255,.9);font-weight:700;">💜 ${clip.likes}</div>
+              <div style="text-align:right;flex-shrink:0;">
+                ${submitted
+                  ? `<div style="font-size:15px;font-weight:900;color:${isTop?'#e9d5ff':'#fff'};">${pct}%</div>
+                     <div style="font-size:10px;color:rgba(255,255,255,.6);">💜 ${votes}표</div>`
+                  : `<div style="font-size:11px;color:rgba(255,255,255,.8);">💜 ${clip.likes}</div>`
+                }
               </div>
             </div>
           </div>
+
+          <!-- 결과 프로그레스 바 (투표 후만) -->
+          ${submitted ? `
+            <div style="position:relative;height:6px;background:rgba(255,255,255,.07);overflow:hidden;">
+              <div id="wvote-bar-${i}" style="
+                height:100%;width:0%;
+                background:${isTop ? 'linear-gradient(to right,var(--accent),var(--pink))' : 'rgba(255,255,255,.25)'};
+                transition:width .7s cubic-bezier(.4,0,.2,1) ${i * 0.1}s;
+              "></div>
+            </div>` : ''}
         </div>`;
     }).join('')}
-    <button class="btn-next" style="width:100%;margin-top:4px;" id="week-vote-btn" onclick="submitWeekVote()">
-      ${state.weekVoteSubmitted ? '✅ 투표 완료' : '투표하기 (+5 마일리지)'}
-    </button>`;
-}
 
-if (!state.weekVoteSelected) state.weekVoteSelected = -1;
-if (!state.weekVoteSubmitted) state.weekVoteSubmitted = false;
+    <button class="btn-next" style="width:100%;margin-top:4px;${submitted?'opacity:.5;cursor:default;':''}"
+      onclick="submitWeekVote()" ${submitted?'disabled':''}>
+      ${submitted ? '✅ 투표 완료' : '투표하기 (+5 마일리지)'}
+    </button>`;
+
+  // 투표 완료 시 프로그레스 바 애니메이션
+  if (submitted) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      CLIP_DATA.forEach((clip, i) => {
+        const bar = document.getElementById('wvote-bar-' + i);
+        if (bar) {
+          const votes = WEEK_VOTE_COUNTS[clip.title] || 0;
+          const pct = total > 0 ? Math.round(votes / total * 100) : 0;
+          bar.style.width = pct + '%';
+        }
+      });
+    }));
+  }
+}
 
 function selectWeekVote(i) {
   if (state.weekVoteSubmitted) return;
@@ -3231,6 +3290,9 @@ function selectWeekVote(i) {
 function submitWeekVote() {
   if (state.weekVoteSubmitted) { showToast('이미 투표했어요'); return; }
   if (state.weekVoteSelected < 0) { showToast('클립을 선택해주세요'); return; }
+  // 선택한 클립 투표 수 +1
+  const selectedClip = CLIP_DATA[state.weekVoteSelected];
+  if (selectedClip) WEEK_VOTE_COUNTS[selectedClip.title] = (WEEK_VOTE_COUNTS[selectedClip.title] || 0) + 1;
   state.weekVoteSubmitted = true;
   addMileage(5, '주간 클립 투표');
   showToast('투표 완료! +5 마일리지 ⭐');
