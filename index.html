@@ -351,6 +351,86 @@ input, textarea { font-family: inherit; outline: none; }
 }
 .cost-right { font-weight: 700; color: #f87171; }
 
+/* ── AI IMAGE GEN ── */
+.img-gen-area {
+  border-radius: var(--radius); overflow: hidden;
+  margin-bottom: 14px; position: relative;
+  background: var(--surface); border: 1px solid var(--border);
+}
+.img-gen-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  padding: 20px; text-align: center;
+}
+.img-gen-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff; border: none; border-radius: 12px;
+  padding: 11px 20px; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: .2s; box-shadow: 0 4px 16px rgba(139,92,246,.35);
+}
+.img-gen-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,92,246,.5); }
+.img-gen-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.img-gen-cost-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(139,92,246,.12); border: 1px solid rgba(139,92,246,.25);
+  border-radius: 20px; padding: 3px 10px; font-size: 10px; color: var(--accent2);
+  font-weight: 600;
+}
+.img-gen-result {
+  position: relative;
+}
+.img-gen-result-img {
+  width: 100%; height: 200px; object-fit: cover; object-position: center; display: block;
+  transition: opacity .4s;
+}
+.img-gen-result-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(14,14,18,.85) 100%);
+}
+.img-gen-result-info {
+  position: absolute; bottom: 10px; left: 12px; right: 12px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.img-gen-mood {
+  font-size: 11px; color: #fff; font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
+.img-gen-regen-btn {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+  color: #fff; border-radius: 8px; padding: 4px 10px;
+  font-size: 10px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px);
+}
+.img-gen-regen-btn:hover { background: rgba(255,255,255,.25); }
+
+/* simulated generated image */
+.img-gen-canvas {
+  width: 100%; height: 200px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px; position: relative;
+  overflow: hidden;
+}
+.img-gen-canvas::before {
+  content: ''; position: absolute; inset: 0;
+  background: inherit; filter: blur(0px);
+}
+.img-gen-canvas-char {
+  width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+  border: 3px solid rgba(255,255,255,.4); box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  position: relative; z-index: 1;
+}
+.img-gen-canvas-char img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.img-gen-canvas-label {
+  font-size: 11px; color: rgba(255,255,255,.9); font-weight: 700;
+  text-shadow: 0 1px 6px rgba(0,0,0,.7); position: relative; z-index: 1;
+  text-align: center; max-width: 80%;
+}
+
+@keyframes imgGenReveal {
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 1; transform: scale(1); }
+}
+.img-gen-reveal { animation: imgGenReveal .6s ease forwards; }
+
 /* STEP 4 — CHAT WRITING */
 .chat-meta-bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -1251,6 +1331,8 @@ const state = {
   cardStyle: 'dark',
   isPublic: false,
   cardTitle: '',
+  generatedImage: null, // base64 or preset url
+  imageGenFreeLeft: 3,
 
   gallery: [
     { id:1, title:'봄날의 고백', theme:'☁️', themeName:'Fluff', mode:'유사연', turns:5, style:'dark', public:false, date:'2026.04.28', likes:0 },
@@ -1295,6 +1377,35 @@ const AI_SUGGESTIONS = {
     '"옆에 있어줘서 다행이야. 없었으면 무너졌을 것 같아."',
     '"뭐가 됐든, 난 네 편이야. 항상."'
   ]
+};
+
+// 테마 × 상황 키워드 → 이미지 프롬프트 & 시뮬레이션 그라디언트
+const IMG_PRESETS = {
+  fluff: [
+    { prompt:'벚꽃 흩날리는 봄날 오후, 따뜻한 햇살', grad:'linear-gradient(135deg,#ffe4f0,#ffd6c8,#fff0ba)', icon:'🌸', mood:'봄날 설렘' },
+    { prompt:'카페 창가, 따뜻한 조명, 커피 향', grad:'linear-gradient(135deg,#3d2010,#7a4a2a,#c4843a)', icon:'☕', mood:'카페 데이트' },
+    { prompt:'노을 지는 강변, 황금빛 석양', grad:'linear-gradient(135deg,#ff7e2a,#ff4d6d,#6b2fa0)', icon:'🌅', mood:'저녁 노을' },
+  ],
+  angst: [
+    { prompt:'비 오는 밤 편의점 앞, 번지는 가로등', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#0d2040)', icon:'🌧', mood:'빗속 이별' },
+    { prompt:'텅 빈 교실, 해 지는 창문, 긴 그림자', grad:'linear-gradient(135deg,#1a0a0a,#2d1515,#1a1a2e)', icon:'🏫', mood:'빈 교실' },
+    { prompt:'겨울밤 거리, 흩날리는 눈, 가로등', grad:'linear-gradient(135deg,#0d1a2e,#1a2a40,#2a3a50)', icon:'❄️', mood:'겨울밤' },
+  ],
+  action: [
+    { prompt:'긴박한 폐건물, 붉은 조명, 연기', grad:'linear-gradient(135deg,#1a0000,#3d0a0a,#1a0a1a)', icon:'🔥', mood:'긴박한 탈출' },
+    { prompt:'도심 옥상, 바람 강한 밤하늘, 도시 야경', grad:'linear-gradient(135deg,#0a0a0a,#1a1a2e,#0d2040)', icon:'🌃', mood:'도심 야경' },
+    { prompt:'폭우 속 달리는 장면, 빠른 움직임', grad:'linear-gradient(135deg,#0a1a0a,#1a2e1a,#2e3d1a)', icon:'⚡', mood:'폭우 질주' },
+  ],
+  funny: [
+    { prompt:'밝고 화사한 카페, 코믹한 상황', grad:'linear-gradient(135deg,#fff9c4,#ffe0b2,#f8bbd0)', icon:'😂', mood:'유쾌한 카페' },
+    { prompt:'놀이공원, 파란 하늘, 형형색색 풍선', grad:'linear-gradient(135deg,#e3f2fd,#bbdefb,#fff9c4)', icon:'🎡', mood:'놀이공원 소동' },
+    { prompt:'편의점 야식, 형광등 아래, 밤샘', grad:'linear-gradient(135deg,#1a1a0a,#2e2e0a,#3d3d1a)', icon:'🏪', mood:'편의점 야식' },
+  ],
+  wholesome: [
+    { prompt:'따뜻한 방 안, 창밖 비, 담요와 차', grad:'linear-gradient(135deg,#3d2010,#5d3a1a,#7a4a2a)', icon:'🧸', mood:'아늑한 실내' },
+    { prompt:'공원 잔디밭, 맑은 하늘, 한적한 오후', grad:'linear-gradient(135deg,#1a3d1a,#2e5c2e,#3d7a3d)', icon:'🌿', mood:'공원 한낮' },
+    { prompt:'별이 가득한 밤하늘, 조용한 언덕', grad:'linear-gradient(135deg,#0a0a2e,#1a1a4d,#0d0d3a)', icon:'🌌', mood:'별밤 언덕' },
+  ],
 };
 
 const REFINEMENTS = [
@@ -1459,6 +1570,7 @@ function startStudio() {
   state.cardStyle = 'dark';
   state.isPublic = false;
   state.cardTitle = '';
+  state.generatedImage = null;
 
   goPage('studio');
   document.getElementById('bnav-studio').classList.add('active');
@@ -1557,6 +1669,9 @@ function s2_character() {
     <div style="margin-bottom:14px;">
       <div style="font-size:16px;font-weight:800;margin-bottom:4px;">캐릭터를 설정해요</div>
       <div style="font-size:12px;color:var(--sub);">직접 입력해 OOC를 방지해요 (최대 2명)</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--accent2);">
+        🎨 캐릭터 사진을 첨부하면 AI 이미지 생성 시 얼굴이 반영돼요
+      </div>
     </div>
   `;
   [0, 1].forEach(i => {
@@ -1655,6 +1770,124 @@ function setTurns(n) { state.turns = n; renderStepContent(); }
 
 /* ── STEP 4: CHAT ── */
 let currentTurnWho = 0; // 0 = char A / reader, 1 = char B
+let currentImgPresetIdx = 0;
+
+function buildImgGenArea() {
+  const theme = state.selectedTheme || 'fluff';
+  const presets = IMG_PRESETS[theme] || IMG_PRESETS.fluff;
+  const preset = presets[currentImgPresetIdx % presets.length];
+  const charAvatar = state.characters[0]?.avatar || null;
+  const charName = state.characters[0]?.name || '캐릭터';
+  const hasConv = state.conversations.length > 0;
+
+  // 맥락 키워드: 장면 배경에서 추출
+  const sceneBgs = state.conversations.map(c => c.sceneBg).filter(Boolean);
+  const contextHint = sceneBgs.length > 0 ? sceneBgs[sceneBgs.length - 1] : preset.prompt;
+
+  const freeLeft = state.imageGenFreeLeft;
+  const canAfford = freeLeft > 0 || state.mileage >= 20;
+  const costLabel = freeLeft > 0 ? `무료 ${freeLeft}회 남음` : '★20~30 소비';
+
+  if (state.generatedImage) {
+    // 생성된 이미지 표시
+    return `
+      <div class="img-gen-area">
+        <div class="img-gen-result img-gen-reveal">
+          <div class="img-gen-canvas" style="background:${state.generatedImage.grad};">
+            ${charAvatar ? `<div class="img-gen-canvas-char"><img src="${charAvatar}" alt="${charName}"></div>` :
+              `<div style="font-size:48px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));position:relative;z-index:1;">${state.generatedImage.icon}</div>`}
+            <div class="img-gen-canvas-label">${state.generatedImage.mood}</div>
+            <div style="position:relative;z-index:1;font-size:9px;color:rgba(255,255,255,.55);margin-top:2px;">AI Generated · ${state.generatedImage.prompt}</div>
+          </div>
+          <div class="img-gen-result-overlay"></div>
+          <div class="img-gen-result-info">
+            <div class="img-gen-mood">${state.generatedImage.icon} ${state.generatedImage.mood}</div>
+            <button class="img-gen-regen-btn" onclick="regenImage()">🔄 재생성</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="img-gen-area">
+      <div class="img-gen-placeholder">
+        <div style="font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:4px;">🎨 AI 클립 이미지</div>
+        <div style="font-size:10px;color:var(--sub);margin-bottom:12px;line-height:1.6;">
+          캐릭터 기본 이미지 + 대화 맥락을 분석해<br>장면에 맞는 이미지를 생성해요
+        </div>
+        ${!hasConv ? `<div style="font-size:11px;color:var(--muted);">대화를 1턴 이상 작성하면 생성할 수 있어요</div>` : `
+          <div style="margin-bottom:10px;font-size:10px;color:var(--sub);background:var(--surface2);border-radius:8px;padding:6px 10px;width:100%;text-align:left;">
+            📍 감지된 장면: <strong style="color:var(--text);">${contextHint.slice(0,40)}${contextHint.length>40?'...':''}</strong>
+          </div>
+          <button class="img-gen-btn" onclick="requestImageGen()" ${!canAfford?'disabled':''}>
+            ✨ AI 이미지 생성
+          </button>
+          <div class="img-gen-cost-badge" style="margin-top:8px;">${costLabel}</div>
+          ${!canAfford ? '<div style="font-size:10px;color:#f87171;margin-top:6px;">마일리지가 부족해요</div>' : ''}
+        `}
+      </div>
+    </div>`;
+}
+
+function requestImageGen() {
+  if (state.imageGenFreeLeft <= 0 && state.mileage < 20) {
+    openModal('modal-low-mileage'); return;
+  }
+  showLoading('AI가 장면 이미지를 생성 중이에요 🎨', '대화 맥락을 분석하고 있어요...');
+  setTimeout(() => {
+    hideLoading();
+
+    const theme = state.selectedTheme || 'fluff';
+    const presets = IMG_PRESETS[theme] || IMG_PRESETS.fluff;
+
+    // 장면 배경 키워드 기반으로 프리셋 선택
+    const sceneBgs = state.conversations.map(c => c.sceneBg).filter(Boolean).join(' ');
+    let bestIdx = currentImgPresetIdx % presets.length;
+    // 간단한 키워드 매칭
+    presets.forEach((p, i) => {
+      const kw = p.prompt + p.mood;
+      if (sceneBgs && kw.split('').some(ch => sceneBgs.includes(ch))) bestIdx = i;
+    });
+    const preset = presets[bestIdx];
+    currentImgPresetIdx = (bestIdx + 1) % presets.length;
+
+    state.generatedImage = { ...preset };
+
+    if (state.imageGenFreeLeft > 0) {
+      state.imageGenFreeLeft--;
+      showToast(`AI 이미지 생성 완료! (무료 ${state.imageGenFreeLeft}회 남음)`);
+    } else {
+      spendMileage(25, 'AI 이미지 생성');
+      showToast('AI 이미지 생성 완료! ★25 소비');
+    }
+
+    renderStepContent();
+  }, 2200);
+}
+
+function regenImage() {
+  if (state.imageGenFreeLeft <= 0 && state.mileage < 20) {
+    openModal('modal-low-mileage'); return;
+  }
+  state.generatedImage = null;
+  showLoading('다른 장면으로 재생성 중이에요 🔄', '잠깐만요...');
+  setTimeout(() => {
+    hideLoading();
+    const theme = state.selectedTheme || 'fluff';
+    const presets = IMG_PRESETS[theme] || IMG_PRESETS.fluff;
+    const preset = presets[currentImgPresetIdx % presets.length];
+    currentImgPresetIdx = (currentImgPresetIdx + 1) % presets.length;
+    state.generatedImage = { ...preset };
+
+    if (state.imageGenFreeLeft > 0) {
+      state.imageGenFreeLeft--;
+      showToast(`재생성 완료! (무료 ${state.imageGenFreeLeft}회 남음)`);
+    } else {
+      spendMileage(25, 'AI 이미지 재생성');
+    }
+    renderStepContent();
+  }, 1800);
+}
 
 function s4_chat() {
   const ch = state.characters;
@@ -1689,6 +1922,9 @@ function s4_chat() {
   const whoA = state.mode==='reader' ? '나' : nameA;
   const whoB = nameB;
 
+  // 이미지 영역 HTML 빌드
+  const imgAreaHtml = buildImgGenArea();
+
   return `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="font-size:14px;font-weight:800;">대화 작성</div>
@@ -1697,6 +1933,8 @@ function s4_chat() {
     <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:8px;padding:7px 10px;margin-bottom:10px;font-size:11px;color:var(--sub);">
       ${THEMES.find(t=>t.id===state.selectedTheme)?.emoji} ${THEMES.find(t=>t.id===state.selectedTheme)?.name} · ${state.mode==='reader'?'유사연':'커플링'} · ${state.turns}턴
     </div>
+
+    ${imgAreaHtml}
 
     <div class="chat-area">${convHtml || '<div style="text-align:center;color:var(--muted);font-size:12px;padding:30px 0;">아직 대화가 없어요<br>아래에서 첫 대사를 써봐요 ✏️</div>'}</div>
 
@@ -1879,13 +2117,26 @@ function buildCardPreview(styleData) {
     </div>`;
   });
 
+  const genImg = state.generatedImage;
+  const charAvatar = state.characters[0]?.avatar;
+  const heroHtml = genImg ? `
+    <div style="border-radius:10px;overflow:hidden;margin-bottom:8px;position:relative;height:80px;">
+      <div style="width:100%;height:100%;background:${genImg.grad};display:flex;align-items:center;justify-content:center;gap:8px;">
+        ${charAvatar ? `<img src="${charAvatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid rgba(255,255,255,.4);">` :
+          `<span style="font-size:28px;">${genImg.icon}</span>`}
+        <div style="font-size:9px;color:rgba(255,255,255,.8);font-weight:700;">${genImg.mood}</div>
+      </div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.4));"></div>
+    </div>` : '';
+
   return `
     <div class="card-preview-wrap">
       <div class="card-preview" style="background:${styleData.bg};">
+        ${heroHtml}
         <div class="card-preview-header" style="color:${styleData.color};">${themeData?.emoji||''} ${themeData?.name||''} · ${state.mode==='reader'?'유사연':'커플링'}</div>
         <div class="card-preview-title" style="color:${styleData.color};">${state.cardTitle || '하이라이트 제목'}</div>
         <div class="card-preview-chat">${bubblesHtml || `<div style="font-size:11px;color:${styleData.color};opacity:.4;">대화를 추가하면 여기 표시돼요</div>`}</div>
-        <div class="card-wm" style="color:${styleData.color};">#BunjangGlobal #팬픽하이라이트<br>globalbunjang.com</div>
+        <div class="card-wm" style="color:${styleData.color};">#BunjangGlobal #AU하이라이트<br>globalbunjang.com</div>
       </div>
     </div>`;
 }
