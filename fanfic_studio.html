@@ -844,6 +844,84 @@ input, textarea { font-family: inherit; outline: none; }
    MY PAGE
 ═══════════════════════════════════════════ */
 .my-page { padding: 16px; }
+
+/* ── SUBPAGES ── */
+.subpage { display: flex; flex-direction: column; min-height: 100%; }
+.subpage-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 52px; z-index: 50;
+}
+.subpage-title { font-size: 15px; font-weight: 800; }
+.subpage-body { padding: 16px; flex: 1; }
+
+/* mileage dashboard */
+.ml-dashboard {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
+}
+.ml-stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 12px;
+}
+.ml-stat-label { font-size: 10px; color: var(--sub); margin-bottom: 4px; }
+.ml-stat-val { font-size: 22px; font-weight: 900; }
+.ml-stat-val.earn { color: #4ade80; }
+.ml-stat-val.spend { color: #f87171; }
+.ml-stat-val.total { color: #facc15; }
+
+.ml-history-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.ml-history-row:last-child { border: none; }
+.ml-history-icon {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.ml-history-icon.earn-bg { background: rgba(74,222,128,.12); }
+.ml-history-icon.spend-bg { background: rgba(248,113,113,.12); }
+.ml-history-label { flex: 1; font-size: 12px; font-weight: 600; }
+.ml-history-date { font-size: 10px; color: var(--sub); }
+.ml-history-amt { font-size: 13px; font-weight: 800; }
+.ml-history-amt.earn { color: #4ade80; }
+.ml-history-amt.spend { color: #f87171; }
+
+/* saved chars */
+.char-save-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
+  cursor: pointer; transition: .2s;
+}
+.char-save-card:hover { border-color: var(--accent); }
+.char-save-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.char-save-avatar {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; overflow: hidden;
+}
+.char-save-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.char-save-name { font-size: 15px; font-weight: 800; }
+.char-save-relation { font-size: 11px; color: var(--sub); margin-top: 2px; }
+.char-chip-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.char-chip-tag {
+  background: rgba(139,92,246,.12); border: 1px solid rgba(139,92,246,.25);
+  border-radius: 20px; padding: 3px 9px; font-size: 10px; color: var(--accent2);
+  font-weight: 600;
+}
+.char-save-actions { display: flex; gap: 8px; margin-top: 12px; }
+.char-use-btn {
+  flex: 1; background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff; border: none; border-radius: 8px; padding: 9px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.char-edit-btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--sub); border-radius: 8px; padding: 9px 14px;
+  font-size: 12px; cursor: pointer;
+}
 .my-profile {
   background: linear-gradient(135deg, rgba(139,92,246,.15), rgba(236,72,153,.1));
   border: 1px solid rgba(139,92,246,.25); border-radius: var(--radius);
@@ -1163,19 +1241,84 @@ input, textarea { font-family: inherit; outline: none; }
         <div class="my-menu-item" onclick="goPage('gallery')">
           <span>🖼 내 갤러리</span><span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-menu-item">
+        <div class="my-menu-item" onclick="goPage('my-chars')">
           <span>🎭 저장된 캐릭터</span><span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-menu-item">
+        <div class="my-menu-item" onclick="goPage('my-mileage')">
           <span>📊 마일리지 내역</span><span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-menu-item">
-          <span>🔔 알림 설정</span><span class="my-menu-arrow">›</span>
-        </div>
-        <div class="my-menu-item">
+        <div class="my-menu-item" onclick="goPage('my-account')">
           <span>⚙️ 계정 설정</span><span class="my-menu-arrow">›</span>
         </div>
         <div style="height:72px;"></div>
+      </div>
+    </div>
+
+    <!-- ══ MILEAGE HISTORY PAGE ══ -->
+    <div class="page" id="page-my-mileage">
+      <div class="subpage">
+        <div class="subpage-header">
+          <button class="clip-back-btn" onclick="goPage('my')">←</button>
+          <div class="subpage-title">📊 마일리지 내역</div>
+        </div>
+        <div class="subpage-body" id="mileage-history-body"></div>
+        <div style="height:80px;"></div>
+      </div>
+    </div>
+
+    <!-- ══ SAVED CHARS PAGE ══ -->
+    <div class="page" id="page-my-chars">
+      <div class="subpage">
+        <div class="subpage-header">
+          <button class="clip-back-btn" onclick="goPage('my')">←</button>
+          <div class="subpage-title">🎭 저장된 캐릭터</div>
+        </div>
+        <div class="subpage-body" id="saved-chars-body"></div>
+        <div style="height:80px;"></div>
+      </div>
+    </div>
+
+    <!-- ══ ACCOUNT SETTINGS PAGE ══ -->
+    <div class="page" id="page-my-account">
+      <div class="subpage">
+        <div class="subpage-header">
+          <button class="clip-back-btn" onclick="goPage('my')">←</button>
+          <div class="subpage-title">⚙️ 계정 설정</div>
+        </div>
+        <div class="subpage-body">
+          <!-- Google 로그인 정보 -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;">가입 정보</div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+              <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700;flex-shrink:0;">G</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;">@fan_writer</div>
+                <div style="font-size:11px;color:var(--sub);">fan_writer@gmail.com</div>
+              </div>
+            </div>
+            <div style="background:var(--surface2);border-radius:10px;padding:10px 12px;">
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border);">
+                <span style="color:var(--sub);">로그인 방식</span><span style="font-weight:700;">Google</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border);">
+                <span style="color:var(--sub);">가입일</span><span style="font-weight:700;">2026.01.15</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;">
+                <span style="color:var(--sub);">계정 상태</span><span style="font-weight:700;color:#4ade80;">정상</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 위험 구역 -->
+          <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:var(--radius);padding:16px;">
+            <div style="font-size:12px;font-weight:700;color:#f87171;margin-bottom:10px;">⚠️ 위험 구역</div>
+            <div style="font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:12px;">
+              탈퇴 시 모든 클립, 마일리지, 캐릭터 설정이 영구 삭제됩니다. 이 작업은 되돌릴 수 없어요.
+            </div>
+            <button onclick="confirmWithdraw()" style="width:100%;background:transparent;border:1px solid #f87171;color:#f87171;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;">회원 탈퇴</button>
+          </div>
+        </div>
+        <div style="height:80px;"></div>
       </div>
     </div>
 
@@ -1452,6 +1595,8 @@ function goPage(name) {
 
   if (name === 'gallery') renderGallery();
   if (name === 'feed') renderFeed();
+  if (name === 'my-mileage') renderMileageHistory();
+  if (name === 'my-chars') renderSavedChars();
   window.scrollTo(0, 0);
 }
 
@@ -2306,8 +2451,8 @@ function renderFeed() {
 function switchFeedTab(el, tab) {
   document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('on'));
   el.classList.add('on');
-  // same data for demo
-  renderFeed();
+  if (tab === 'vote') renderVoteTab();
+  else renderFeed();
 }
 
 function toggleLike(i) {
@@ -2642,6 +2787,195 @@ function doShare(platform) {
 ═══════════════════════════════════════════ */
 renderVoteList();
 renderFeed();
+
+/* ═══════════════════════════════════════════
+   MILEAGE HISTORY
+═══════════════════════════════════════════ */
+const MILEAGE_HISTORY = [
+  { icon:'🛍', label:'굿즈 찜하기', date:'2026.04.28', amt:+3, type:'earn' },
+  { icon:'🛒', label:'장바구니 담기', date:'2026.04.27', amt:+5, type:'earn' },
+  { icon:'✨', label:'AI 대사 추천', date:'2026.04.27', amt:-7, type:'spend' },
+  { icon:'📤', label:'클립 외부 공유', date:'2026.04.26', amt:+5, type:'earn' },
+  { icon:'🗳', label:'커뮤니티 투표 참여', date:'2026.04.25', amt:+5, type:'earn' },
+  { icon:'🎨', label:'AI 이미지 생성', date:'2026.04.25', amt:-25, type:'spend' },
+  { icon:'✍️', label:'문장 다듬기', date:'2026.04.24', amt:-5, type:'spend' },
+  { icon:'🛍', label:'굿즈 찜하기', date:'2026.04.23', amt:+3, type:'earn' },
+  { icon:'💿', label:'구매 완료 (앨범)', date:'2026.04.22', amt:+50, type:'earn' },
+  { icon:'📝', label:'리뷰 작성', date:'2026.04.22', amt:+10, type:'earn' },
+  { icon:'✨', label:'AI 대사 추천', date:'2026.04.21', amt:-7, type:'spend' },
+  { icon:'📤', label:'클립 외부 공유', date:'2026.04.20', amt:+5, type:'earn' },
+  { icon:'🎁', label:'신규 가입 보너스', date:'2026.01.15', amt:+80, type:'earn' },
+];
+
+function renderMileageHistory() {
+  const el = document.getElementById('mileage-history-body');
+  if (!el) return;
+
+  const totalEarn = MILEAGE_HISTORY.filter(h => h.type==='earn').reduce((s,h) => s+h.amt, 0);
+  const totalSpend = MILEAGE_HISTORY.filter(h => h.type==='spend').reduce((s,h) => s+h.amt, 0);
+  const balance = totalEarn + totalSpend;
+
+  el.innerHTML = `
+    <div class="ml-dashboard">
+      <div class="ml-stat-card" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(236,72,153,.08));border-color:rgba(139,92,246,.3);">
+        <div class="ml-stat-label">현재 보유 마일리지</div>
+        <div class="ml-stat-val total">${state.mileage} ⭐</div>
+      </div>
+      <div class="ml-stat-card">
+        <div class="ml-stat-label">총 적립</div>
+        <div class="ml-stat-val earn">+${totalEarn}</div>
+      </div>
+      <div class="ml-stat-card">
+        <div class="ml-stat-label">총 사용</div>
+        <div class="ml-stat-val spend">${totalSpend}</div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">거래 내역</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0 12px;">
+      ${MILEAGE_HISTORY.map(h => `
+        <div class="ml-history-row">
+          <div class="ml-history-icon ${h.type==='earn'?'earn-bg':'spend-bg'}">${h.icon}</div>
+          <div style="flex:1;">
+            <div class="ml-history-label">${h.label}</div>
+            <div class="ml-history-date">${h.date}</div>
+          </div>
+          <div class="ml-history-amt ${h.type}">${h.amt > 0 ? '+' : ''}${h.amt} ★</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   SAVED CHARACTERS
+═══════════════════════════════════════════ */
+const SAVED_CHARS = [
+  {
+    name: '민준', relation: '소꿉친구 / 라이벌', personality: ['장난스러움','츤데레','활발함'],
+    speech: ['반말'], avatar: null, emoji: '😏',
+    usedIn: ['봄날의 고백', '헬기 드립 대환장'], lastUsed: '2026.04.28'
+  },
+  {
+    name: '현우', relation: '같은 팀 / 전 연인', personality: ['진지함','조용함','다정함'],
+    speech: ['반말','혼합'], avatar: null, emoji: '🌙',
+    usedIn: ['이별 이후'], lastUsed: '2026.04.25'
+  },
+  {
+    name: '리온', relation: '팀원 / 베스트 프렌드', personality: ['다정함','활발함','wholesome'],
+    speech: ['반말'], avatar: null, emoji: '🌟',
+    usedIn: ['항상 네 편이야'], lastUsed: '2026.04.23'
+  },
+  {
+    name: '카이', relation: '파트너 / 동료 요원', personality: ['쿨함','진지함','장난스러움'],
+    speech: ['반말'], avatar: null, emoji: '⚡',
+    usedIn: ['마지막 임무'], lastUsed: '2026.04.20'
+  },
+];
+
+function renderSavedChars() {
+  const el = document.getElementById('saved-chars-body');
+  if (!el) return;
+  el.innerHTML = SAVED_CHARS.map((ch, i) => `
+    <div class="char-save-card">
+      <div class="char-save-header">
+        <div class="char-save-avatar">
+          ${ch.avatar ? `<img src="${ch.avatar}" alt="${ch.name}">` : ch.emoji}
+        </div>
+        <div style="flex:1;">
+          <div class="char-save-name">${ch.name}</div>
+          <div class="char-save-relation">${ch.relation}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">마지막 사용 ${ch.lastUsed}</div>
+        </div>
+      </div>
+      <div class="char-chip-row">
+        ${ch.personality.map(p => `<div class="char-chip-tag">${p}</div>`).join('')}
+        ${ch.speech.map(s => `<div class="char-chip-tag" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.25);color:var(--pink);">${s}</div>`).join('')}
+      </div>
+      <div style="font-size:10px;color:var(--sub);margin-top:8px;">📌 사용된 클립: ${ch.usedIn.join(', ')}</div>
+      <div class="char-save-actions">
+        <button class="char-use-btn" onclick="useCharacter(${i})">이 캐릭터로 클립 만들기</button>
+        <button class="char-edit-btn">편집</button>
+      </div>
+    </div>`).join('');
+}
+
+function useCharacter(i) {
+  const ch = SAVED_CHARS[i];
+  state.characters[0] = { name: ch.name, personality: [...ch.personality], speech: [...ch.speech], relation: ch.relation, avatar: ch.avatar };
+  showToast(`${ch.name} 캐릭터 불러옴 ✅`);
+  setTimeout(() => startStudio(), 500);
+}
+
+function confirmWithdraw() {
+  if (confirm('정말 탈퇴하시겠어요? 모든 데이터가 삭제되며 복구할 수 없어요.')) {
+    showToast('탈퇴 처리되었어요. 이용해주셔서 감사해요 💜');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   FEED VOTE TAB
+═══════════════════════════════════════════ */
+function renderVoteTab() {
+  const list = document.getElementById('feed-list');
+  const total = VOTE_DATA.reduce((s,v) => s+v.votes, 0);
+
+  list.innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(236,72,153,.08));border:1px solid rgba(139,92,246,.3);border-radius:var(--radius);padding:14px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px;">🗳 이번 주 최고 설렘 클립 투표</div>
+      <div style="font-size:11px;color:var(--sub);">투표하고 +5 마일리지 받아요! · 마감 D-3</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;">총 ${total}표 참여 중</div>
+    </div>
+    ${CLIP_DATA.map((clip, i) => {
+      const voteItem = VOTE_DATA.find(v => v.title === clip.title);
+      const votes = voteItem ? voteItem.votes : Math.floor(Math.random()*20+5);
+      const pct = Math.round(votes / total * 100);
+      const styleData = { bg: STYLE_MAP_BG[clip.style] || STYLE_MAP_BG.dark, color: STYLE_MAP_COLOR[clip.style] || '#fff' };
+      const isSelected = state.weekVoteSelected === i;
+      return `
+        <div onclick="selectWeekVote(${i})" style="
+          background:var(--card-bg);border:2px solid ${isSelected?'var(--accent)':'var(--border)'};
+          border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:.2s;
+          ${isSelected?'box-shadow:0 0 0 1px var(--accent);':''}">
+          <div style="position:relative;height:100px;overflow:hidden;">
+            ${clip.img ? `<img src="${clip.img}" style="width:100%;height:100%;object-fit:cover;object-position:top;">` :
+              `<div style="width:100%;height:100%;background:${styleData.bg};"></div>`}
+            <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.65) 0%,rgba(0,0,0,.2) 100%);"></div>
+            <div style="position:absolute;inset:0;padding:12px;display:flex;align-items:center;gap:12px;">
+              <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${isSelected?'var(--accent)':'rgba(255,255,255,.5)'};background:${isSelected?'var(--accent)':'rgba(0,0,0,.3)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                ${isSelected?'<span style="color:#fff;font-size:11px;">✓</span>':''}
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:800;color:#fff;">${clip.theme} ${clip.title}</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.7);">@${clip.user} · ${clip.themeName}</div>
+              </div>
+              <div style="margin-left:auto;text-align:right;">
+                <div style="font-size:11px;color:rgba(255,255,255,.9);font-weight:700;">💜 ${clip.likes}</div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('')}
+    <button class="btn-next" style="width:100%;margin-top:4px;" id="week-vote-btn" onclick="submitWeekVote()">
+      ${state.weekVoteSubmitted ? '✅ 투표 완료' : '투표하기 (+5 마일리지)'}
+    </button>`;
+}
+
+if (!state.weekVoteSelected) state.weekVoteSelected = -1;
+if (!state.weekVoteSubmitted) state.weekVoteSubmitted = false;
+
+function selectWeekVote(i) {
+  if (state.weekVoteSubmitted) return;
+  state.weekVoteSelected = i;
+  renderVoteTab();
+}
+
+function submitWeekVote() {
+  if (state.weekVoteSubmitted) { showToast('이미 투표했어요'); return; }
+  if (state.weekVoteSelected < 0) { showToast('클립을 선택해주세요'); return; }
+  state.weekVoteSubmitted = true;
+  addMileage(5, '주간 클립 투표');
+  showToast('투표 완료! +5 마일리지 ⭐');
+  renderVoteTab();
+}
 </script>
 </body>
 </html>
