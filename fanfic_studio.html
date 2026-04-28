@@ -1135,12 +1135,31 @@ input, textarea { font-family: inherit; outline: none; }
     <!-- ══ HOME PAGE ══ -->
     <div class="page active" id="page-home">
       <div class="home-hero">
-        <div class="hero-tag">✨ K-pop 팬픽 하이라이트</div>
-        <h1 class="hero-title">최애와의 순간,<br><span>5분 만에 완성</span></h1>
-        <p class="hero-sub">직접 쓰는 재미를 살리되, AI가 보조해 완성도를 높이고<br>공유가 곧 홍보가 되는 바이럴 구조</p>
+        <div class="hero-tag">💬 채팅형 AU 클립</div>
+        <h1 class="hero-title">내 팬픽의 설레는 순간,<br><span>채팅으로 뚝딱</span></h1>
+        <p class="hero-sub">가볍게 써보는 단편 AU부터,<br>연재 중인 팬픽의 하이라이트 장면을 채팅 클립으로 만들어 공유까지.</p>
         <div class="hero-cta">
-          <button class="btn-primary pulse" onclick="startStudio()">+ 새 하이라이트 만들기</button>
+          <button class="btn-primary pulse" onclick="startStudio()">+ 클립 만들기</button>
           <button class="btn-secondary" onclick="goPage('feed')">피드 둘러보기</button>
+        </div>
+
+        <!-- 사용 방식 3종 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:24px;">
+          <div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:12px 10px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:6px;">✍️</div>
+            <div style="font-size:11px;font-weight:800;margin-bottom:3px;">단편 AU</div>
+            <div style="font-size:9px;color:var(--sub);line-height:1.5;">짧은 설정으로<br>가볍게 써봐요</div>
+          </div>
+          <div style="background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.2);border-radius:12px;padding:12px 10px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:6px;">📖</div>
+            <div style="font-size:11px;font-weight:800;margin-bottom:3px;">하이라이트 클립</div>
+            <div style="font-size:9px;color:var(--sub);line-height:1.5;">연재 팬픽의<br>명장면만 채팅으로</div>
+          </div>
+          <div style="background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.2);border-radius:12px;padding:12px 10px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:6px;">📤</div>
+            <div style="font-size:11px;font-weight:800;margin-bottom:3px;">바이럴 공유</div>
+            <div style="font-size:9px;color:var(--sub);line-height:1.5;">클립 공유로<br>팬픽 홍보까지</div>
+          </div>
         </div>
       </div>
 
