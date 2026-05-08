@@ -1324,12 +1324,12 @@ input, textarea { font-family: inherit; outline: none; }
         <div class="feed-scroll">
           <div class="feed-card" onclick="openFeedItem(0)">
             <div class="feed-card-img" style="background:linear-gradient(135deg,#1a1a2e,#2e1040);">
-              <img src="images/clip1.png" alt="봄날의 고백">
+              <img src="images/clip1.png" alt="금성제와 나의 DM">
               <div class="feed-card-overlay"></div>
-              <div class="feed-card-theme">Fluff</div>
+              <div class="feed-card-theme">아이돌물</div>
             </div>
             <div class="feed-card-body">
-              <div class="feed-card-title">봄날의 고백</div>
+              <div class="feed-card-title">금성제와 나의 DM</div>
               <div class="feed-card-meta">@starlight_j · 유사연 · 7턴</div>
               <div class="feed-card-actions">
                 <button class="feed-mini-btn" onclick="event.stopPropagation();likeCard(this)">💜 142</button>
@@ -1339,13 +1339,13 @@ input, textarea { font-family: inherit; outline: none; }
           </div>
           <div class="feed-card" onclick="openFeedItem(1)">
             <div class="feed-card-img" style="background:linear-gradient(135deg,#2e1a1a,#1a0a0a);">
-              <img src="images/clip2.png" alt="이별 이후">
+              <img src="images/clip2.png" alt="203호 현관 앞에서">
               <div class="feed-card-overlay"></div>
-              <div class="feed-card-theme">Angst</div>
+              <div class="feed-card-theme">키못방</div>
             </div>
             <div class="feed-card-body">
-              <div class="feed-card-title">이별 이후</div>
-              <div class="feed-card-meta">@moonchild_k · 커플링 · 7턴</div>
+              <div class="feed-card-title">203호 현관 앞에서</div>
+              <div class="feed-card-meta">@pinkbunny22 · 커플링 · 9턴</div>
               <div class="feed-card-actions">
                 <button class="feed-mini-btn" onclick="event.stopPropagation();likeCard(this)">💜 89</button>
                 <button class="feed-mini-btn" onclick="event.stopPropagation();remixCard()">🔀 리믹스</button>
@@ -1733,8 +1733,8 @@ const state = {
   imageGenFreeLeft: 3,
 
   gallery: [
-    { id:1, title:'봄날의 고백', theme:'🎤', themeName:'아이돌물', mode:'유사연', turns:5, style:'dark', public:false, date:'2026.04.28', likes:0 },
-    { id:2, title:'이별 이후', theme:'🏠', themeName:'키못방', mode:'커플링', turns:8, style:'sunset', public:true, date:'2026.04.25', likes:3 }
+    { id:1, title:'금성제와 나의 DM', theme:'🎤', themeName:'아이돌물', mode:'유사연', turns:5, style:'dark', public:false, date:'2026.04.28', likes:0 },
+    { id:2, title:'203호 현관 앞에서', theme:'🏠', themeName:'키못방', mode:'커플링', turns:8, style:'sunset', public:true, date:'2026.04.25', likes:3 }
   ]
 };
 
@@ -1988,8 +1988,8 @@ const MEMBER_GOODS = {
 
 // 클립 제목 → 멤버 매핑
 const CLIP_MEMBER_MAP = {
-  '봄날의 고백': '민준',
-  '이별 이후': '현우',
+  '금성제와 나의 DM': '금성제',
+  '203호 현관 앞에서': '현서',
   '헬기 드립 대환장': '태양',
   '항상 네 편이야': '세진',
   '마지막 임무': '카이',
@@ -2074,9 +2074,9 @@ function goPage(name) {
    HOME
 ═══════════════════════════════════════════ */
 const VOTE_DATA = [
-  { title:'봄날의 고백', user:'@starlight_j', votes: 47 },
+  { title:'금성제와 나의 DM', user:'@starlight_j', votes: 47 },
   { title:'항상 네 편이야', user:'@pinkbunny22', votes: 38 },
-  { title:'이별 이후', user:'@moonchild_k', votes: 29 }
+  { title:'203호 현관 앞에서', user:'@pinkbunny22', votes: 29 }
 ];
 let voteSubmitted = false;
 
@@ -2741,7 +2741,7 @@ function s5_card() {
       <div style="font-size:12px;color:var(--sub);">스타일을 고르고 공유 준비를 해요</div>
     </div>
     <div class="field-label">하이라이트 제목</div>
-    <input class="field-input" placeholder="예: 봄날의 고백" style="margin-bottom:14px;"
+    <input class="field-input" placeholder="예: 금성제와 나의 DM" style="margin-bottom:14px;"
       value="${state.cardTitle}" oninput="state.cardTitle=this.value;updateCardPreview()">
 
     <div class="field-label">카드 스타일</div>
@@ -3571,12 +3571,12 @@ const SAVED_CHARS = [
   {
     name: '민준', relation: '소꿉친구 / 라이벌', personality: ['장난스러움','츤데레','활발함'],
     speech: ['반말'], avatar: null, emoji: '😏',
-    usedIn: ['봄날의 고백', '헬기 드립 대환장'], lastUsed: '2026.04.28'
+    usedIn: ['금성제와 나의 DM', '코첼라의 밤'], lastUsed: '2026.04.28'
   },
   {
     name: '현우', relation: '같은 팀 / 전 연인', personality: ['진지함','조용함','다정함'],
     speech: ['반말','혼합'], avatar: null, emoji: '🌙',
-    usedIn: ['이별 이후'], lastUsed: '2026.04.25'
+    usedIn: ['203호 현관 앞에서'], lastUsed: '2026.04.25'
   },
   {
     name: '리온', relation: '팀원 / 베스트 프렌드', personality: ['다정함','활발함','wholesome'],
