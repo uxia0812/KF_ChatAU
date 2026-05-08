@@ -147,24 +147,42 @@ input, textarea { font-family: inherit; outline: none; }
 }
 .btn-secondary:hover { border-color: var(--accent); }
 
-/* free badge */
-.free-banner {
+/* attendance check */
+.attendance-section {
   margin: 0 16px 20px;
-  background: linear-gradient(135deg, rgba(139,92,246,.15), rgba(236,72,153,.1));
-  border: 1px solid rgba(139,92,246,.3);
-  border-radius: var(--radius); padding: 12px 14px;
-  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, rgba(139,92,246,.12), rgba(236,72,153,.08));
+  border: 1px solid rgba(139,92,246,.25);
+  border-radius: var(--radius); padding: 14px 16px;
 }
-.free-banner-icon { font-size: 22px; flex-shrink: 0; }
-.free-banner-text strong { font-size: 13px; font-weight: 700; display: block; }
-.free-banner-text span { font-size: 11px; color: var(--sub); }
-.free-dots { display: flex; gap: 5px; margin-top: 5px; }
-.free-dot {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: var(--accent); display: flex; align-items: center;
-  justify-content: center; font-size: 10px; font-weight: 700; color: #fff;
+.attendance-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
 }
-.free-dot.used { background: var(--muted); }
+.attendance-title { font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.attendance-reward { font-size: 11px; color: var(--accent2); font-weight: 600; }
+.attendance-days { display: flex; gap: 6px; }
+.attendance-day {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 4px;
+}
+.attendance-day.checked {
+  background: rgba(139,92,246,.18); border-color: var(--accent);
+}
+.attendance-day.today:not(.checked) {
+  border-color: rgba(139,92,246,.5); background: rgba(139,92,246,.08);
+}
+.attendance-day-label { font-size: 9px; color: var(--muted); font-weight: 600; }
+.attendance-day.checked .attendance-day-label { color: var(--accent2); }
+.attendance-day-check { font-size: 14px; line-height: 1; }
+.attendance-day-pts { font-size: 9px; color: var(--muted); font-weight: 700; }
+.attendance-day.checked .attendance-day-pts { color: #facc15; }
+.attendance-streak {
+  margin-top: 10px; font-size: 11px; color: var(--sub);
+  display: flex; align-items: center; gap: 6px;
+}
+.attendance-streak strong { color: var(--accent2); }
+/* keep old free-banner refs working for JS */
+.free-banner { display: none; }
 
 /* section */
 .section { padding: 0 16px; margin-bottom: 24px; }
@@ -250,22 +268,33 @@ input, textarea { font-family: inherit; outline: none; }
 .step-panel { display: none; }
 .step-panel.active { display: block; }
 
-/* STEP 1 — THEME */
-.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-.theme-card {
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm); padding: 14px 10px;
-  text-align: center; cursor: pointer; transition: .2s;
+/* STEP 1 — SCENARIO LIST */
+.scenario-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.scenario-item {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 14px 14px 12px; cursor: pointer; transition: background .15s;
+  display: flex; align-items: center; gap: 12px; position: relative;
 }
-.theme-card:hover { border-color: var(--accent); }
-.theme-card.selected {
-  border-color: var(--accent);
-  background: rgba(139,92,246,.1);
-  box-shadow: 0 0 0 1px var(--accent);
+.scenario-item:last-child { border-bottom: none; }
+.scenario-item:hover { background: rgba(139,92,246,.07); }
+.scenario-item.selected { background: rgba(139,92,246,.12); }
+.scenario-item.selected::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--accent); border-radius: 3px 0 0 3px;
 }
-.theme-emoji { font-size: 26px; display: block; margin-bottom: 5px; }
-.theme-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
-.theme-desc { font-size: 10px; color: var(--sub); }
+.scenario-emoji { font-size: 24px; flex-shrink: 0; width: 36px; text-align: center; }
+.scenario-body { flex: 1; min-width: 0; }
+.scenario-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; color: var(--text); }
+.scenario-desc { font-size: 11px; color: var(--sub); margin-bottom: 5px; }
+.scenario-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.scenario-tag {
+  font-size: 10px; color: var(--sub); background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 20px; padding: 1px 7px;
+}
+.scenario-item.selected .scenario-tag { color: var(--accent2); border-color: rgba(139,92,246,.35); background: rgba(139,92,246,.1); }
+.scenario-arrow { font-size: 14px; color: var(--muted); flex-shrink: 0; }
+.scenario-item.selected .scenario-arrow { color: var(--accent); }
+/* keep old refs working */
 .theme-card.locked { opacity: .45; cursor: default; }
 .theme-lock { font-size: 10px; color: #f59e0b; margin-top: 3px; }
 
@@ -440,28 +469,47 @@ input, textarea { font-family: inherit; outline: none; }
 .chat-meta-info { font-size: 11px; color: var(--sub); }
 .chat-meta-turns { font-size: 12px; font-weight: 700; }
 
-.chat-area { margin-bottom: 12px; min-height: 200px; }
+.chat-area {
+  margin-bottom: 12px; min-height: 200px;
+  background: #000; border-radius: 16px; padding: 12px 8px;
+}
 
-.bubble-group { margin-bottom: 10px; }
-.bubble-row { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 3px; }
+.bubble-group { margin-bottom: 2px; }
+/* iMessage: avatar only on left side, no name labels */
+.bubble-row { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 2px; }
 .bubble-row.right { flex-direction: row-reverse; }
 .bubble-avatar {
-  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  background: var(--surface2); border: 1px solid var(--border);
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface2); border: 1px solid rgba(255,255,255,.12);
   display: flex; align-items: center; justify-content: center;
-  font-size: 10px; overflow: hidden;
+  font-size: 11px; overflow: hidden; margin-bottom: 2px;
 }
 .bubble-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.bubble-name { font-size: 9px; color: var(--sub); margin-bottom: 2px; }
+/* hide avatar on right side (= "me") */
+.bubble-row.right .bubble-avatar { display: none; }
+/* show sender name only for left (first bubble in group) */
+.bubble-name { font-size: 10px; color: #8e8e93; margin-bottom: 3px; padding-left: 34px; }
+.bubble-row.right + .bubble-row.right .bubble-name,
+.bubble-row.right .bubble-name { display: none; }
 .bubble {
-  max-width: 75%; border-radius: 14px; padding: 8px 11px;
-  font-size: 13px; line-height: 1.5; word-break: break-word;
+  max-width: 72%; border-radius: 18px; padding: 9px 13px;
+  font-size: 14px; line-height: 1.45; word-break: break-word;
+  position: relative;
 }
-.bubble.left { background: var(--surface2); border-bottom-left-radius: 3px; }
+/* left bubble — iMessage gray */
+.bubble.left {
+  background: #2c2c2e;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+/* right bubble — iMessage blue */
 .bubble.right {
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
-  color: #fff; border-bottom-right-radius: 3px;
+  background: #0a84ff;
+  color: #fff;
+  border-bottom-right-radius: 4px;
 }
+/* spacing between consecutive same-side bubbles */
+.bubble-group + .bubble-group { margin-top: 8px; }
 
 .scene-bg-strip {
   background: rgba(250,204,21,.07); border: 1px dashed rgba(250,204,21,.25);
@@ -632,38 +680,103 @@ input, textarea { font-family: inherit; outline: none; }
 /* ═══════════════════════════════════════════
    GALLERY PAGE
 ═══════════════════════════════════════════ */
-.gallery-page { padding: 16px; }
-.gallery-filter { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
+/* ── GALLERY (채팅 목록 스타일) ── */
+.gallery-page { padding: 0; background: var(--bg); }
+
+.gallery-header {
+  padding: 18px 16px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.gallery-header-title { font-size: 20px; font-weight: 900; margin-bottom: 2px; }
+.gallery-header-sub { font-size: 12px; color: var(--sub); }
+
+.gallery-tabs {
+  display: flex; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 52px; z-index: 40;
+}
+.gallery-tab {
+  flex: 1; padding: 12px 4px; text-align: center;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  border-bottom: 2px solid transparent; cursor: pointer; transition: .15s;
+}
+.gallery-tab.on { color: var(--text); border-bottom-color: var(--accent); }
+
+/* 채팅 목록 아이템 */
+.chat-list { }
+.chat-list-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .12s;
+  position: relative;
+}
+.chat-list-item:hover { background: rgba(255,255,255,.03); }
+.chat-list-item:active { background: rgba(139,92,246,.08); }
+
+.cli-avatar {
+  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; overflow: hidden; position: relative;
+}
+.cli-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.cli-avatar-emoji {
+  width: 100%; height: 100%; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+/* 내 작성 = 그라디언트 테두리 */
+.cli-avatar.mine { box-shadow: 0 0 0 2px var(--accent); }
+/* 팔로우 = 핑크 테두리 */
+.cli-avatar.follow { box-shadow: 0 0 0 2px var(--pink); }
+
+.cli-body { flex: 1; min-width: 0; }
+.cli-name {
+  font-size: 15px; font-weight: 700; margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 5px;
+}
+.cli-badge-mine {
+  font-size: 9px; background: rgba(139,92,246,.2); color: var(--accent2);
+  border-radius: 4px; padding: 1px 5px; font-weight: 700; flex-shrink: 0;
+}
+.cli-badge-follow {
+  font-size: 9px; background: rgba(236,72,153,.15); color: var(--pink);
+  border-radius: 4px; padding: 1px 5px; font-weight: 700; flex-shrink: 0;
+}
+.cli-preview {
+  font-size: 13px; color: var(--sub);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cli-preview.unread { color: var(--text); font-weight: 600; }
+
+.cli-right {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 5px; flex-shrink: 0;
+}
+.cli-time { font-size: 11px; color: var(--muted); }
+.cli-unread-badge {
+  min-width: 20px; height: 20px; border-radius: 10px;
+  background: #ff3b30; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; padding: 0 5px;
+}
+
+.gallery-empty {
+  text-align: center; padding: 60px 20px; color: var(--muted);
+}
+
+/* 필터 (기존 호환) */
+.gallery-filter { display: none; }
 .filter-chip {
   padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
   background: var(--surface2); border: 1px solid var(--border); color: var(--sub);
   white-space: nowrap; cursor: pointer; transition: .15s;
 }
 .filter-chip.on { background: rgba(139,92,246,.15); border-color: var(--accent); color: var(--accent2); }
-
-.gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.gallery-item {
-  background: var(--card-bg); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; transition: .2s;
-}
-.gallery-item:hover { border-color: var(--accent); transform: translateY(-2px); }
-.gallery-thumb {
-  height: 100px; display: flex; align-items: center; justify-content: center;
-  font-size: 28px; position: relative;
-}
-.gallery-privacy {
-  position: absolute; top: 5px; right: 5px;
-  background: rgba(0,0,0,.5); border-radius: 5px; padding: 2px 5px;
-  font-size: 9px; color: #fff;
-}
-.gallery-body { padding: 8px; }
-.gallery-title { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
-.gallery-meta { font-size: 9px; color: var(--sub); }
-.gallery-actions { display: flex; gap: 4px; margin-top: 6px; }
-.gallery-action-btn {
-  flex: 1; background: var(--surface2); border: none; border-radius: 6px;
-  padding: 4px; font-size: 9px; color: var(--sub); cursor: pointer;
-}
+/* 기존 grid 숨김 */
+.gallery-grid { display: none !important; }
 
 /* ═══════════════════════════════════════════
    CLIP DETAIL PAGE
@@ -1163,17 +1276,8 @@ input, textarea { font-family: inherit; outline: none; }
         </div>
       </div>
 
-      <div class="free-banner">
-        <div class="free-banner-icon">🎁</div>
-        <div class="free-banner-text">
-          <strong>첫 3회 완전 무료!</strong>
-          <span>마일리지 없이 AI 기능 체험</span>
-          <div class="free-dots">
-            <div class="free-dot" title="1회 남음">1</div>
-            <div class="free-dot" title="2회 남음">2</div>
-            <div class="free-dot used" title="사용됨">✓</div>
-          </div>
-        </div>
+      <div class="attendance-section" id="attendance-section">
+        <!-- rendered by renderAttendance() -->
       </div>
 
       <!-- 인기 피드 프리뷰 -->
@@ -1265,8 +1369,20 @@ input, textarea { font-family: inherit; outline: none; }
     <!-- ══ GALLERY PAGE ══ -->
     <div class="page" id="page-gallery">
       <div class="gallery-page">
+        <div class="gallery-header">
+          <div class="gallery-header-title">채팅</div>
+          <div class="gallery-header-sub" id="gallery-header-sub">0개의 대화</div>
+        </div>
+        <div class="gallery-tabs">
+          <div class="gallery-tab on" id="gtab-all" onclick="switchGalleryTab('all')">전체</div>
+          <div class="gallery-tab" id="gtab-mine" onclick="switchGalleryTab('mine')">내 작성</div>
+          <div class="gallery-tab" id="gtab-follow" onclick="switchGalleryTab('follow')">팔로우</div>
+        </div>
+        <!-- 기존 호환용 (숨김) -->
         <div class="gallery-filter" id="gallery-filter"></div>
         <div class="gallery-grid" id="gallery-grid"></div>
+        <!-- 새 채팅 목록 -->
+        <div class="chat-list" id="gallery-chat-list"></div>
         <div style="height:72px;"></div>
       </div>
     </div>
@@ -1427,7 +1543,7 @@ input, textarea { font-family: inherit; outline: none; }
       <span class="bnav-icon">✏️</span>만들기
     </button>
     <button class="bnav-item" onclick="goPage('gallery')" id="bnav-gallery">
-      <span class="bnav-icon">🖼</span>갤러리
+      <span class="bnav-icon">💬</span>채팅
     </button>
     <button class="bnav-item" onclick="goPage('feed')" id="bnav-feed">
       <span class="bnav-icon">📰</span>피드
@@ -1587,71 +1703,182 @@ const state = {
   ]
 };
 
-const STEPS = ['테마','캐릭터','모드·턴','대화','카드'];
+// ─── 출석체크 ───────────────────────────────────────
+const ATTEND_KEY = 'kf_attendance';
+const ATTEND_DAYS = ['월','화','수','목','금','토','일'];
+const ATTEND_REWARDS = [10, 10, 20, 10, 10, 20, 50]; // 마일리지
+
+function loadAttendance() {
+  try { return JSON.parse(localStorage.getItem(ATTEND_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveAttendance(data) {
+  try { localStorage.setItem(ATTEND_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function getWeekKey() {
+  const d = new Date();
+  const jan1 = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+  return `${d.getFullYear()}-W${week}`;
+}
+
+function getTodayDow() {
+  // 0=Sun→6, map to Mon=0..Sun=6
+  const d = new Date().getDay();
+  return d === 0 ? 6 : d - 1;
+}
+
+function doAttendanceCheck() {
+  const data = loadAttendance();
+  const wk = getWeekKey();
+  if (!data[wk]) data[wk] = [];
+  const todayIdx = getTodayDow();
+  if (!data[wk].includes(todayIdx)) {
+    data[wk].push(todayIdx);
+    const reward = ATTEND_REWARDS[todayIdx];
+    state.mileage += reward;
+    saveAttendance(data);
+    return reward; // newly checked
+  }
+  return 0;
+}
+
+function renderAttendance() {
+  const el = document.getElementById('attendance-section');
+  if (!el) return;
+  const data = loadAttendance();
+  const wk = getWeekKey();
+  const checkedDays = data[wk] || [];
+  const todayIdx = getTodayDow();
+  const streak = checkedDays.length;
+
+  el.innerHTML = `
+    <div class="attendance-header">
+      <div class="attendance-title">📅 이번 주 출석체크</div>
+      <div class="attendance-reward">★ 최대 130 획득</div>
+    </div>
+    <div class="attendance-days">
+      ${ATTEND_DAYS.map((day, i) => `
+        <div class="attendance-day ${checkedDays.includes(i)?'checked':''} ${i===todayIdx&&!checkedDays.includes(i)?'today':''}">
+          <div class="attendance-day-label">${day}</div>
+          <div class="attendance-day-check">${checkedDays.includes(i) ? '✓' : (i===todayIdx ? '●' : '○')}</div>
+          <div class="attendance-day-pts">★${ATTEND_REWARDS[i]}</div>
+        </div>`).join('')}
+    </div>
+    <div class="attendance-streak">
+      이번 주 <strong>${streak}일</strong> 출석 완료
+      ${streak >= 7 ? ' 🎉 주간 개근 달성!' : ''}
+    </div>
+  `;
+}
+
+const STEPS = ['시나리오','캐릭터','모드·턴','대화','카드'];
 
 const THEMES = [
-  { id:'fluff', emoji:'☁️', name:'Fluff', desc:'따뜻하고 달콤한' },
-  { id:'angst', emoji:'💔', name:'Angst', desc:'감정적 갈등' },
-  { id:'action', emoji:'⚡', name:'Action', desc:'긴박한 전개' },
-  { id:'funny', emoji:'😂', name:'Funny', desc:'유쾌한 일상' },
-  { id:'wholesome', emoji:'🌟', name:'Wholesome', desc:'뭉클한 순간' },
-  { id:'spicy', emoji:'🔞', name:'Spicy', desc:'연령 인증 필요', locked:true }
+  { id:'idol', emoji:'🎤', name:'아이돌물', desc:'SNS DM · 백스테이지 · 팬미팅', tags:['팬→아이돌','아이돌→팬','동료'], moods:'설렘 · 긴장 · 두근거림' },
+  { id:'share', emoji:'🏠', name:'키웃방', desc:'협관 · 친구 · X관계 · 짝사랑', tags:['룸메이트','소꿉친구','옛 연인'], moods:'일상 · 달달 · 갈등' },
+  { id:'metgala', emoji:'👗', name:'멧갈라', desc:'글로벌 패션위크 · 백스테이지', tags:['라이벌','파트너','스타일리스트'], moods:'화려함 · 긴장감' },
+  { id:'coachella', emoji:'🎵', name:'코첼라 에프터파티', desc:'해외투어 · 우연한 만남', tags:['우연 동승','VIP 파티','공연 후'], moods:'설레는 밤 · 흥분' },
+  { id:'nth', emoji:'👥', name:'제 n번째 멤버', desc:'동성 그룹 · 혼성 그룹', tags:['신입','고참','라이벌'], moods:'성장 · 갈등 · 우정' },
+  { id:'timetravel', emoji:'🔀', name:'20살 vs 28살', desc:'시간여행 · 자기자신과의 만남', tags:['과거 자신','미래 자신'], moods:'혼란 · 깨달음' },
+  { id:'hospital', emoji:'🏥', name:'병원 로맨스', desc:'의사 · 환자 · 간호사', tags:['주치의','환자','동료 의사'], moods:'간절함 · 따뜻함' },
+  { id:'office', emoji:'💼', name:'회사 동료', desc:'직장 · 야근 · 프로젝트', tags:['상사','동기','거래처'], moods:'스트레스 · 썸' }
 ];
 
 const AI_SUGGESTIONS = {
+  idol: [
+    '"안녕하세요. 오래 팬이었는데 용기 내서 연락해봐요."',
+    '"혹 답장 오실 줄 몰랐어요..."',
+    '"왜, 연락 오면 좋죠."'
+  ],
+  share: [
+    '"야, 오늘 또 늦게 들어왔지? 기다렸잖아."',
+    '"그냥... 네가 옆에 있으면 좋았어. 그게 다야."',
+    '"우리 이제 어떻게 되는 거야?"'
+  ],
+  metgala: [
+    '"오늘 드레스 완벽한데요. 의도하신 거죠?"',
+    '"백스테이지에서 마주친 건 우연이 아니었어요."',
+    '"이런 파티에서 당신을 만날 줄은 몰랐어요."'
+  ],
+  coachella: [
+    '"이 파티에서 당신을 만날 줄은 몰랐어요."',
+    '"공연 끝나고 이렇게 단둘이 있게 될 줄이야."',
+    '"내일 아침이 되면 다 꿈 같겠죠."'
+  ],
+  nth: [
+    '"신입이 이렇게 잘하면 저 위태롭지 않나요?"',
+    '"팀을 위한 거야. 개인 감정은 나중에."',
+    '"같이 데뷔하게 돼서 다행이야, 솔직히."'
+  ],
+  timetravel: [
+    '"너... 나야? 진짜로?"',
+    '"그때 그 선택, 후회하지 않았으면 해."',
+    '"미래에서 왔다고 믿어줄 것 같지 않지만."'
+  ],
+  hospital: [
+    '"괜찮으세요? 안색이 안 좋아 보여서요."',
+    '"의사가 환자한테 이러면 안 되는데."',
+    '"퇴원하고 나서도... 연락해도 될까요?"'
+  ],
+  office: [
+    '"야근 또 혼자 하려고요? 같이 해요."',
+    '"프로젝트 때문만은 아닌 것 같은데요?"',
+    '"회사에서 이러면 안 된다는 거 알면서."'
+  ],
   fluff: [
     '"그냥... 네가 옆에 있으면 좋았어. 그게 다야."',
     '"이렇게 솔직하면 어쩌라고." 낮은 목소리로 중얼거렸다.',
     '"바보야. 그런 말은 일찍 해야지."'
-  ],
-  angst: [
-    '"다 알고 있었어. 그래서 더 힘들었어."',
-    '"가지 마. 제발." 말이 목에 걸렸다.',
-    '"어쩌면 우리가 처음부터 틀렸던 걸지도."'
-  ],
-  action: [
-    '"지금 당장 움직여! 시간이 없어!"',
-    '"내가 막을게. 너는 먼저 가."',
-    '"여기서 포기하면 다 끝이야. 같이 버텨."'
-  ],
-  funny: [
-    '"야, 방금 그거 아무도 못 봤지? 맞지?"',
-    '"내가 왜 이러고 있는 건지 나도 모르겠어."',
-    '"이 상황이 이렇게 된 건 100% 네 잘못이야."'
-  ],
-  wholesome: [
-    '"고마워. 진짜로. 그 말이 나한테 얼마나 큰지 알아?"',
-    '"옆에 있어줘서 다행이야. 없었으면 무너졌을 것 같아."',
-    '"뭐가 됐든, 난 네 편이야. 항상."'
   ]
 };
 
 // 테마 × 상황 키워드 → 이미지 프롬프트 & 시뮬레이션 그라디언트
 const IMG_PRESETS = {
+  idol: [
+    { prompt:'SNS DM 답장 온 새벽, 푸른 화면 빛', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#0d2040)', icon:'📱', mood:'새벽 DM' },
+    { prompt:'콘서트 백스테이지, 화려한 조명', grad:'linear-gradient(135deg,#1a0030,#3d0060,#6b00a0)', icon:'🎤', mood:'백스테이지' },
+    { prompt:'팬미팅 포토타임, 눈이 마주치는 순간', grad:'linear-gradient(135deg,#ff4d6d,#c70049,#6b2fa0)', icon:'💜', mood:'팬미팅' },
+  ],
+  share: [
+    { prompt:'작은 주방, 늦은 밤, 따뜻한 불빛', grad:'linear-gradient(135deg,#3d2010,#7a4a2a,#c4843a)', icon:'🏠', mood:'늦은 밤 주방' },
+    { prompt:'거실 소파, 창밖 비, 담요', grad:'linear-gradient(135deg,#1a1a2e,#2e2e4d,#3d3d5c)', icon:'🌧', mood:'빗소리 거실' },
+    { prompt:'현관 앞 마주침, 새벽 귀가', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#2a2a4a)', icon:'🚪', mood:'새벽 귀가' },
+  ],
+  metgala: [
+    { prompt:'글로벌 레드카펫, 화려한 드레스', grad:'linear-gradient(135deg,#1a0a00,#3d2000,#7a5000)', icon:'👗', mood:'레드카펫' },
+    { prompt:'백스테이지 드레스룸, 거울과 조명', grad:'linear-gradient(135deg,#0a0a0a,#1a1a1a,#2e2e2e)', icon:'🪞', mood:'백스테이지' },
+    { prompt:'파티 옥상, 도시 야경, 샴페인', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#2a0a4d)', icon:'🥂', mood:'옥상 파티' },
+  ],
+  coachella: [
+    { prompt:'에프터파티 야외무대, 네온 조명', grad:'linear-gradient(135deg,#1a0030,#4d0080,#8000ff)', icon:'🎵', mood:'에프터파티' },
+    { prompt:'사막 밤하늘, 별빛, 페스티벌', grad:'linear-gradient(135deg,#0a0a2e,#1a1a4d,#0d0d3a)', icon:'🌌', mood:'사막 밤하늘' },
+    { prompt:'VIP 라운지, 칵테일, 우연한 만남', grad:'linear-gradient(135deg,#1a0a0a,#3d1515,#5c2020)', icon:'🍹', mood:'VIP 라운지' },
+  ],
+  nth: [
+    { prompt:'연습실 거울 앞, 땀, 조명', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#2e1a4d)', icon:'💪', mood:'연습실' },
+    { prompt:'합숙소 복도, 새벽, 조용한 긴장감', grad:'linear-gradient(135deg,#0a0a0a,#1a1a2e,#0d1a2e)', icon:'🌙', mood:'합숙소 새벽' },
+    { prompt:'무대 위 조명, 첫 공연, 흥분', grad:'linear-gradient(135deg,#1a0a00,#3d2000,#6b4000)', icon:'🎭', mood:'첫 무대' },
+  ],
+  timetravel: [
+    { prompt:'시간이 겹치는 순간, 빛 번짐, 아련함', grad:'linear-gradient(135deg,#1a1a0a,#3d3d1a,#5c5c2e)', icon:'⏰', mood:'시간의 교차' },
+    { prompt:'젊은 날의 교실, 빛바랜 따뜻함', grad:'linear-gradient(135deg,#3d2010,#5d3a1a,#8a5a30)', icon:'🏫', mood:'과거의 교실' },
+    { prompt:'미래 도시, 낯설고 차가운 풍경', grad:'linear-gradient(135deg,#0a1a2e,#1a2e4d,#0d2040)', icon:'🌆', mood:'미래 도시' },
+  ],
+  hospital: [
+    { prompt:'병원 복도, 흰 빛, 조용한 새벽', grad:'linear-gradient(135deg,#0a1a1a,#1a2e2e,#2e4d4d)', icon:'🏥', mood:'병원 새벽' },
+    { prompt:'병실 창가, 햇살, 따뜻한 회복', grad:'linear-gradient(135deg,#ffe4f0,#ffd6e8,#fff0f8)', icon:'🌸', mood:'병실 햇살' },
+    { prompt:'옥상 정원, 퇴원 전날, 노을', grad:'linear-gradient(135deg,#ff7e2a,#ff4d6d,#6b2fa0)', icon:'🌅', mood:'퇴원 전날' },
+  ],
+  office: [
+    { prompt:'야근 중 사무실, 도시 야경, 커피', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#2a2a4a)', icon:'💼', mood:'야근 사무실' },
+    { prompt:'회의실 단둘이, 긴장된 공기', grad:'linear-gradient(135deg,#1a1a2e,#2e2e4d,#1a1a3d)', icon:'🤝', mood:'회의실' },
+    { prompt:'엘리베이터 안, 어색한 침묵', grad:'linear-gradient(135deg,#0a0a0a,#1a1a1a,#2e2e2e)', icon:'🛗', mood:'엘리베이터' },
+  ],
   fluff: [
     { prompt:'벚꽃 흩날리는 봄날 오후, 따뜻한 햇살', grad:'linear-gradient(135deg,#ffe4f0,#ffd6c8,#fff0ba)', icon:'🌸', mood:'봄날 설렘' },
     { prompt:'카페 창가, 따뜻한 조명, 커피 향', grad:'linear-gradient(135deg,#3d2010,#7a4a2a,#c4843a)', icon:'☕', mood:'카페 데이트' },
     { prompt:'노을 지는 강변, 황금빛 석양', grad:'linear-gradient(135deg,#ff7e2a,#ff4d6d,#6b2fa0)', icon:'🌅', mood:'저녁 노을' },
-  ],
-  angst: [
-    { prompt:'비 오는 밤 편의점 앞, 번지는 가로등', grad:'linear-gradient(135deg,#0a0a1a,#1a1a3a,#0d2040)', icon:'🌧', mood:'빗속 이별' },
-    { prompt:'텅 빈 교실, 해 지는 창문, 긴 그림자', grad:'linear-gradient(135deg,#1a0a0a,#2d1515,#1a1a2e)', icon:'🏫', mood:'빈 교실' },
-    { prompt:'겨울밤 거리, 흩날리는 눈, 가로등', grad:'linear-gradient(135deg,#0d1a2e,#1a2a40,#2a3a50)', icon:'❄️', mood:'겨울밤' },
-  ],
-  action: [
-    { prompt:'긴박한 폐건물, 붉은 조명, 연기', grad:'linear-gradient(135deg,#1a0000,#3d0a0a,#1a0a1a)', icon:'🔥', mood:'긴박한 탈출' },
-    { prompt:'도심 옥상, 바람 강한 밤하늘, 도시 야경', grad:'linear-gradient(135deg,#0a0a0a,#1a1a2e,#0d2040)', icon:'🌃', mood:'도심 야경' },
-    { prompt:'폭우 속 달리는 장면, 빠른 움직임', grad:'linear-gradient(135deg,#0a1a0a,#1a2e1a,#2e3d1a)', icon:'⚡', mood:'폭우 질주' },
-  ],
-  funny: [
-    { prompt:'밝고 화사한 카페, 코믹한 상황', grad:'linear-gradient(135deg,#fff9c4,#ffe0b2,#f8bbd0)', icon:'😂', mood:'유쾌한 카페' },
-    { prompt:'놀이공원, 파란 하늘, 형형색색 풍선', grad:'linear-gradient(135deg,#e3f2fd,#bbdefb,#fff9c4)', icon:'🎡', mood:'놀이공원 소동' },
-    { prompt:'편의점 야식, 형광등 아래, 밤샘', grad:'linear-gradient(135deg,#1a1a0a,#2e2e0a,#3d3d1a)', icon:'🏪', mood:'편의점 야식' },
-  ],
-  wholesome: [
-    { prompt:'따뜻한 방 안, 창밖 비, 담요와 차', grad:'linear-gradient(135deg,#3d2010,#5d3a1a,#7a4a2a)', icon:'🧸', mood:'아늑한 실내' },
-    { prompt:'공원 잔디밭, 맑은 하늘, 한적한 오후', grad:'linear-gradient(135deg,#1a3d1a,#2e5c2e,#3d7a3d)', icon:'🌿', mood:'공원 한낮' },
-    { prompt:'별이 가득한 밤하늘, 조용한 언덕', grad:'linear-gradient(135deg,#0a0a2e,#1a1a4d,#0d0d3a)', icon:'🌌', mood:'별밤 언덕' },
   ],
 };
 
@@ -1745,12 +1972,46 @@ const CARD_STYLES = [
 ];
 
 const FEED_DATA = [
-  { user:'starlight_j', theme:'☁️', themeName:'Fluff', mode:'유사연', title:'봄날의 고백', excerpt:'"그냥... 네가 옆에 있으면 좋았어. 그게 다야."', likes:142, style:'dark', ago:'2시간 전' },
-  { user:'moonchild_k', theme:'💔', themeName:'Angst', mode:'커플링', title:'이별 이후', excerpt:'"다 알고 있었어. 그래서 더 힘들었어."', likes:89, style:'sunset', ago:'5시간 전' },
-  { user:'fan99', theme:'😂', themeName:'Funny', mode:'유사연', title:'헬기 드립 대환장', excerpt:'"야, 방금 그거 아무도 못 봤지? 맞지?"', likes:67, style:'minimal', ago:'1일 전' },
-  { user:'pinkbunny22', theme:'🌟', themeName:'Wholesome', mode:'커플링', title:'항상 네 편이야', excerpt:'"옆에 있어줘서 다행이야."', likes:203, style:'fancy', ago:'2일 전' },
-  { user:'kpop_writer', theme:'⚡', themeName:'Action', mode:'커플링', title:'마지막 임무', excerpt:'"내가 막을게. 너는 먼저 가."', likes:156, style:'dark', ago:'3일 전' }
+  { user:'starlight_j', theme:'🎤', themeName:'아이돌물', mode:'유사연', title:'봄날의 고백', excerpt:'"그냥... 네가 옆에 있으면 좋았어. 그게 다야."', likes:142, style:'dark', ago:'2시간 전' },
+  { user:'moonchild_k', theme:'🏠', themeName:'키웃방', mode:'커플링', title:'이별 이후', excerpt:'"다 알고 있었어. 그래서 더 힘들었어."', likes:89, style:'sunset', ago:'5시간 전' },
+  { user:'fan99', theme:'🎵', themeName:'코첼라 에프터파티', mode:'유사연', title:'헬기 드립 대환장', excerpt:'"야, 방금 그거 아무도 못 봤지? 맞지?"', likes:67, style:'minimal', ago:'1일 전' },
+  { user:'pinkbunny22', theme:'🏥', themeName:'병원 로맨스', mode:'커플링', title:'항상 네 편이야', excerpt:'"옆에 있어줘서 다행이야."', likes:203, style:'fancy', ago:'2일 전' },
+  { user:'kpop_writer', theme:'👗', themeName:'멧갈라', mode:'커플링', title:'마지막 임무', excerpt:'"내가 막을게. 너는 먼저 가."', likes:156, style:'dark', ago:'3일 전' }
 ];
+
+// 팔로우 중인 시리즈 (새 업데이트 있는 것 포함)
+const FOLLOW_DATA = [
+  {
+    id: 'f1', user:'starlight_j', title:'금성제와 나의 DM', theme:'🎤', themeName:'아이돌물',
+    avatar: 'images/clip1.png',
+    latestMsg: '"설마 나 차단했어?"',
+    newCount: 6, updatedAgo: '지금',
+    totalTurns: 12
+  },
+  {
+    id: 'f2', user:'moonchild_k', title:'코첼라의 밤', theme:'🎵', themeName:'코첼라 에프터파티',
+    avatar: null,
+    latestMsg: '"내일 아침이 되면 다 꿈 같겠죠."',
+    newCount: 3, updatedAgo: '1시간 전',
+    totalTurns: 8
+  },
+  {
+    id: 'f3', user:'pinkbunny22', title:'203호 현관 앞에서', theme:'🏠', themeName:'키웃방',
+    avatar: null,
+    latestMsg: '"어, 이 시간에 들어와?"',
+    newCount: 0, updatedAgo: '어제',
+    totalTurns: 20
+  },
+  {
+    id: 'f4', user:'kpop_writer', title:'레드카펫 뒷이야기', theme:'👗', themeName:'멧갈라',
+    avatar: null,
+    latestMsg: '"오늘 드레스 완벽한데요."',
+    newCount: 0, updatedAgo: '3일 전',
+    totalTurns: 6
+  }
+];
+
+let galleryTab = 'all'; // 'all' | 'mine' | 'follow'
 
 /* ═══════════════════════════════════════════
    PAGE NAV
@@ -1942,27 +2203,30 @@ function nextStep() {
   window.scrollTo(0,0);
 }
 
-/* ── STEP 1: THEME ── */
+/* ── STEP 1: SCENARIO ── */
 function s1_theme() {
   return `
     <div style="margin-bottom:14px;">
-      <div style="font-size:16px;font-weight:800;margin-bottom:4px;">분위기를 골라봐요</div>
-      <div style="font-size:12px;color:var(--sub);">팬픽 하이라이트의 감정 톤을 설정해요</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px;">시나리오를 골라봐요</div>
+      <div style="font-size:12px;color:var(--sub);">어떤 설정에서 시작할까요?</div>
     </div>
-    <div class="theme-grid">
+    <div class="scenario-list">
       ${THEMES.map(t => `
-        <div class="theme-card ${state.selectedTheme===t.id?'selected':''} ${t.locked?'locked':''}"
-          onclick="${t.locked ? 'checkSpicy()' : `selectTheme('${t.id}')`}" data-theme="${t.id}">
-          <span class="theme-emoji">${t.emoji}</span>
-          <div class="theme-name">${t.name}</div>
-          <div class="theme-desc">${t.desc}</div>
-          ${t.locked ? '<div class="theme-lock">🔞 연령 인증 필요</div>' : ''}
+        <div class="scenario-item ${state.selectedTheme===t.id?'selected':''}"
+          onclick="selectTheme('${t.id}')">
+          <div class="scenario-emoji">${t.emoji}</div>
+          <div class="scenario-body">
+            <div class="scenario-name">${t.name}</div>
+            <div class="scenario-desc">${t.desc}</div>
+            <div class="scenario-tags">${(t.tags||[]).map(tag=>`<span class="scenario-tag">${tag}</span>`).join('')}</div>
+          </div>
+          <div class="scenario-arrow">→</div>
         </div>`).join('')}
     </div>
     ${state.selectedTheme ? `
       <div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--sub);">
         선택됨: <strong style="color:var(--accent2);">${THEMES.find(t=>t.id===state.selectedTheme)?.emoji} ${THEMES.find(t=>t.id===state.selectedTheme)?.name}</strong>
-        — AI가 이 분위기로 문장을 추천해요
+        — <span style="color:var(--accent2);">${THEMES.find(t=>t.id===state.selectedTheme)?.moods||''}</span>
       </div>` : ''}
   `;
 }
@@ -2212,25 +2476,35 @@ function s4_chat() {
   const nameB = state.mode==='reader' ? ch[0].name || '캐릭터' : (ch[1].name || '캐릭터 B');
 
   let convHtml = '';
+  let prevSpeaker = -1;
   state.conversations.forEach((conv, idx) => {
-    const isRight = conv.speaker === 0;
+    const isRight = conv.speaker === 0; // speaker 0 = "나" → right (blue)
     const name = conv.speaker === 0 ? (state.mode==='reader'?'나':nameA) : nameB;
     const avatar = state.characters[conv.speaker]?.avatar;
-    const avatarHtml = avatar
-      ? `<div class="bubble-avatar"><img src="${avatar}"></div>`
-      : `<div class="bubble-avatar" style="background:${conv.speaker===0?'var(--accent)':'var(--surface2)'};color:${conv.speaker===0?'#fff':'var(--text)'};">${name[0]||'?'}</div>`;
+    const isFirstInGroup = conv.speaker !== prevSpeaker;
+    prevSpeaker = conv.speaker;
+
+    // left side avatar (only for non-"me" speaker, only on first in group)
+    const avatarHtml = !isRight
+      ? (avatar
+          ? `<div class="bubble-avatar"${isFirstInGroup?'':' style="visibility:hidden"'}><img src="${avatar}"></div>`
+          : `<div class="bubble-avatar"${isFirstInGroup?'':' style="visibility:hidden"'} style="background:#3a3a3c;color:#fff;${isFirstInGroup?'':'visibility:hidden'}">${name[0]||'?'}</div>`)
+      : '';
 
     if (conv.sceneBg) {
       convHtml += `<div class="scene-bg-strip">🎬 ${conv.sceneBg}</div>`;
     }
+    // show sender name only for left side first message in group
+    const nameHtml = (!isRight && isFirstInGroup)
+      ? `<div class="bubble-name">${name}</div>`
+      : '';
+
     convHtml += `
       <div class="bubble-group">
+        ${nameHtml}
         <div class="bubble-row ${isRight?'right':'left'}">
           ${avatarHtml}
-          <div>
-            <div class="bubble-name" style="${isRight?'text-align:right':''}">${name}</div>
-            <div class="bubble ${isRight?'right':'left'}">${conv.text}</div>
-          </div>
+          <div class="bubble ${isRight?'right':'left'}">${conv.text}</div>
         </div>
       </div>`;
   });
@@ -2244,23 +2518,27 @@ function s4_chat() {
   const imgAreaHtml = buildImgGenArea();
 
   return `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <div style="font-size:14px;font-weight:800;">대화 작성</div>
-      <div style="font-size:12px;font-weight:700;color:var(--accent2);">${state.conversations.length}<span style="color:var(--muted);">/${maxMessages}개</span> <span style="font-size:10px;color:var(--muted);font-weight:500;">· ${state.turns}턴</span></div>
-    </div>
-    <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:8px;padding:7px 10px;margin-bottom:10px;font-size:11px;color:var(--sub);">
-      ${THEMES.find(t=>t.id===state.selectedTheme)?.emoji} ${THEMES.find(t=>t.id===state.selectedTheme)?.name} · ${state.mode==='reader'?'유사연':'커플링'} · ${state.turns}턴 (${maxMessages}개)
+    <!-- iMessage 스타일 채팅 헤더 -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">
+        ${state.characters[1]?.avatar ? `<img src="${state.characters[1].avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (THEMES.find(t=>t.id===state.selectedTheme)?.emoji||'💬')}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:800;line-height:1.2;">${nameB}</div>
+        <div style="font-size:10px;color:var(--sub);">${THEMES.find(t=>t.id===state.selectedTheme)?.name||''} · ${state.mode==='reader'?'유사연':'커플링'}</div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--accent2);">${state.conversations.length}<span style="color:var(--muted);">/${maxMessages}</span></div>
     </div>
 
     ${imgAreaHtml}
 
-    <div class="chat-area">${convHtml || '<div style="text-align:center;color:var(--muted);font-size:12px;padding:30px 0;">아직 대화가 없어요<br>아래에서 첫 대사를 써봐요 ✏️</div>'}</div>
+    <div class="chat-area">${convHtml || '<div style="text-align:center;color:#8e8e93;font-size:12px;padding:30px 0;">아직 대화가 없어요<br>아래에서 첫 대사를 써봐요</div>'}</div>
 
     ${canAdd ? `
     <div class="turn-input-card">
       <div class="turn-label">✍️ Turn ${state.conversations.length + 1}</div>
       <div class="turn-who" id="turn-who-btns">
-        <div class="turn-who-btn ${currentTurnWho===0?'on':''}" onclick="setTurnWho(0)">${whoA}</div>
+        <div class="turn-who-btn ${currentTurnWho===0?'on':''}" onclick="setTurnWho(0)">나 (${whoA})</div>
         <div class="turn-who-btn ${currentTurnWho===1?'on':''}" onclick="setTurnWho(1)">${whoB}</div>
       </div>
       <textarea class="chat-input" id="chat-text-input" placeholder="대사를 직접 입력하세요... (최대 500자)" maxlength="500" rows="3"></textarea>
@@ -2521,60 +2799,110 @@ function cartGoods(btn) { btn.textContent='✓'; addMileage(5,'장바구니 담�
 /* ═══════════════════════════════════════════
    GALLERY
 ═══════════════════════════════════════════ */
+function switchGalleryTab(tab) {
+  galleryTab = tab;
+  document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('gtab-' + tab).classList.add('on');
+  renderGalleryChatList();
+}
+
 function renderGallery() {
-  const filters = ['전체','Fluff','Angst','Funny','공개','비공개'];
-  document.getElementById('gallery-filter').innerHTML = filters.map((f,i) =>
-    `<div class="filter-chip ${i===0?'on':''}" onclick="filterGallery('${f}',this)">${f}</div>`).join('');
-
-  renderGalleryGrid(state.gallery);
+  renderGalleryChatList();
 }
 
-function filterGallery(filter, el) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
-  el.classList.add('on');
-  const filtered = filter === '전체' ? state.gallery :
-    filter === '공개' ? state.gallery.filter(g => g.public) :
-    filter === '비공개' ? state.gallery.filter(g => !g.public) :
-    state.gallery.filter(g => g.themeName === filter);
-  renderGalleryGrid(filtered);
-}
+function renderGalleryChatList() {
+  const listEl = document.getElementById('gallery-chat-list');
+  if (!listEl) return;
 
-function renderGalleryGrid(items) {
-  const grid = document.getElementById('gallery-grid');
+  // 내 작성: state.gallery → chat-list 아이템으로 변환
+  const mineItems = state.gallery.map(g => ({
+    id: 'mine-' + g.id,
+    type: 'mine',
+    title: g.title,
+    theme: g.theme,
+    themeName: g.themeName,
+    avatar: g.generatedImage ? null : null,
+    latestMsg: g.lastMsg || (g.conversations && g.conversations.length ? g.conversations[g.conversations.length-1].text : '대화를 시작해봐요'),
+    newCount: 0,
+    updatedAgo: g.date,
+    turns: g.turns,
+    public: g.public,
+    raw: g
+  }));
+
+  // 팔로우
+  const followItems = FOLLOW_DATA.map(f => ({ ...f, type: 'follow' }));
+
+  let items = [];
+  if (galleryTab === 'all') {
+    // 새 업데이트 있는 팔로우 먼저, 그 다음 내 작성, 나머지 팔로우
+    const followNew = followItems.filter(f => f.newCount > 0);
+    const followOld = followItems.filter(f => f.newCount === 0);
+    items = [...followNew, ...mineItems, ...followOld];
+  } else if (galleryTab === 'mine') {
+    items = mineItems;
+  } else {
+    items = followItems;
+  }
+
+  // 헤더 카운트
+  const subEl = document.getElementById('gallery-header-sub');
+  if (subEl) subEl.textContent = `${items.length}개의 대화`;
+
   if (!items.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">아직 클립이 없어요<br><button class="btn-primary" style="margin-top:12px;" onclick="startStudio()">만들기 시작</button></div>`;
+    listEl.innerHTML = `<div class="gallery-empty">
+      ${galleryTab === 'mine' ? '아직 작성한 클립이 없어요<br><button class="btn-primary" style="margin-top:14px;min-width:140px;" onclick="startStudio()">만들기 시작</button>' : '팔로우 중인 작가가 없어요'}
+    </div>`;
     return;
   }
-  const styleMap = { dark:'#1a1a2e', minimal:'#f4f4f8', fancy:'#ffd6e7', sunset:'#1f1035', mint:'#0d2b2b' };
-  // CLIP_DATA 이미지 매핑 (제목 기준)
-  const clipImgMap = {};
-  if (typeof CLIP_DATA !== 'undefined') CLIP_DATA.forEach(c => { if (c.img) clipImgMap[c.title] = c.img; });
 
-  grid.innerHTML = items.map(g => {
-    const clipImg = clipImgMap[g.title] || (g.generatedImage ? null : null);
-    const genImg = g.generatedImage;
-    const thumbContent = clipImg
-      ? `<img src="${clipImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;" alt="${g.title}">
-         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.5));"></div>`
-      : genImg
-        ? `<div style="position:absolute;inset:0;background:${genImg.grad};display:flex;align-items:center;justify-content:center;font-size:32px;">${genImg.icon}</div>`
-        : `<div style="position:absolute;inset:0;background:${styleMap[g.style]||'#1a1a2e'};display:flex;align-items:center;justify-content:center;font-size:28px;">${g.theme}</div>`;
+  listEl.innerHTML = items.map(item => {
+    const avatarHtml = item.avatar
+      ? `<img src="${item.avatar}" alt="">`
+      : `<div class="cli-avatar-emoji" style="background:${item.type==='mine'?'linear-gradient(135deg,var(--accent),var(--pink))':'linear-gradient(135deg,#2c2c2e,#3a3a3c)'};">${item.theme}</div>`;
+
+    const badgeHtml = item.type === 'mine'
+      ? `<span class="cli-badge-mine">내 작성</span>`
+      : `<span class="cli-badge-follow">팔로우</span>`;
+
+    const unreadHtml = item.newCount > 0
+      ? `<div class="cli-unread-badge">${item.newCount}</div>`
+      : '';
+
+    const previewClass = item.newCount > 0 ? 'cli-preview unread' : 'cli-preview';
+    const previewText = item.latestMsg ? item.latestMsg.replace(/"/g, '') : '';
+
     return `
-    <div class="gallery-item">
-      <div class="gallery-thumb" style="background:${styleMap[g.style]||'#1a1a2e'};position:relative;overflow:hidden;">
-        ${thumbContent}
-        <div class="gallery-privacy" style="position:absolute;top:5px;right:5px;">${g.public?'공개':'🔒'}</div>
-      </div>
-      <div class="gallery-body">
-        <div class="gallery-title">${g.title}</div>
-        <div class="gallery-meta">${g.themeName} · ${g.mode} · ${g.turns}턴 · ${g.date}</div>
-        <div class="gallery-actions">
-          <button class="gallery-action-btn" onclick="shareGalleryItem()">공유</button>
-          <button class="gallery-action-btn" onclick="togglePublic(${g.id})">${g.public?'비공개로':'공개로'}</button>
+      <div class="chat-list-item" onclick="openGalleryItem('${item.type==='mine' ? 'mine-'+item.raw?.id : item.id}', '${item.type}')">
+        <div class="cli-avatar ${item.type}">${avatarHtml}</div>
+        <div class="cli-body">
+          <div class="cli-name">${item.title} ${badgeHtml}</div>
+          <div class="${previewClass}">${previewText}</div>
         </div>
-      </div>
-    </div>`;
+        <div class="cli-right">
+          <div class="cli-time">${item.updatedAgo}</div>
+          ${unreadHtml}
+        </div>
+      </div>`;
   }).join('');
+}
+
+function openGalleryItem(itemId, type) {
+  if (type === 'follow') {
+    const f = FOLLOW_DATA.find(x => x.id === itemId);
+    if (f) {
+      f.newCount = 0;
+      renderGalleryChatList();
+      const feedIdx = FEED_DATA.findIndex(fd => fd.title === f.title);
+      if (feedIdx >= 0) { openFeedItem(feedIdx); return; }
+      showToast(`"${f.title}"`);
+    }
+    return;
+  }
+  // mine — id is 'mine-N'
+  const rawId = parseInt(itemId.replace('mine-',''));
+  const g = state.gallery.find(x => x.id === rawId);
+  if (g) showToast(`"${g.title}" 클립`);
 }
 
 function shareGalleryItem() { addMileage(5,'하이라이트 공유'); showToast('공유 완료! +5 마일리지 ⭐'); }
@@ -2582,6 +2910,9 @@ function togglePublic(id) {
   const item = state.gallery.find(g => g.id === id);
   if (item) { item.public = !item.public; renderGallery(); }
 }
+// 기존 filterGallery 호환
+function filterGallery() {}
+function renderGalleryGrid() {}
 
 /* ═══════════════════════════════════════════
    FEED
@@ -2964,6 +3295,15 @@ function doShare(platform) {
 renderVoteList();
 renderFeed();
 renderHomeGoods();
+
+// 출석체크: 방문 시 자동 체크 후 렌더
+(function() {
+  const reward = doAttendanceCheck();
+  renderAttendance();
+  if (reward > 0) {
+    setTimeout(() => { updateMileageUI(); showToast(`출석 완료! ★${reward} 마일리지 획득`); }, 600);
+  }
+})();
 
 /* ═══════════════════════════════════════════
    GOODS RENDERING
