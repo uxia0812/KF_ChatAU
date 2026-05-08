@@ -2893,16 +2893,38 @@ function openGalleryItem(itemId, type) {
     if (f) {
       f.newCount = 0;
       renderGalleryChatList();
+      // CLIP_DATA에서 title 매칭 → openClip
+      const clipMatch = CLIP_DATA.find(c => c.title === f.title);
+      if (clipMatch) { openClip(clipMatch); return; }
+      // FEED_DATA fallback
       const feedIdx = FEED_DATA.findIndex(fd => fd.title === f.title);
       if (feedIdx >= 0) { openFeedItem(feedIdx); return; }
-      showToast(`"${f.title}"`);
+      // 매칭 없으면 첫 번째 클립 열기
+      openClip(CLIP_DATA[0]);
     }
     return;
   }
   // mine — id is 'mine-N'
-  const rawId = parseInt(itemId.replace('mine-',''));
+  const rawId = parseInt(itemId.replace('mine-', ''));
   const g = state.gallery.find(x => x.id === rawId);
-  if (g) showToast(`"${g.title}" 클립`);
+  if (!g) return;
+  // state.gallery 아이템을 CLIP_DATA 형태로 변환해서 openClip
+  const mineClip = CLIP_DATA.find(c => c.title === g.title);
+  if (mineClip) { openClip(mineClip); return; }
+  // 직접 만든 클립은 conversations가 state에 저장되어 있을 수 있음
+  openClip({
+    user: 'fan_writer',
+    theme: g.theme || '✨',
+    themeName: g.themeName || '',
+    mode: g.mode || '',
+    title: g.title,
+    style: g.style || 'dark',
+    ago: g.date,
+    likes: g.likes || 0,
+    img: null,
+    conversations: g.conversations || [],
+    comments: []
+  });
 }
 
 function shareGalleryItem() { addMileage(5,'하이라이트 공유'); showToast('공유 완료! +5 마일리지 ⭐'); }
