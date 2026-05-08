@@ -1972,11 +1972,11 @@ const CARD_STYLES = [
 ];
 
 const FEED_DATA = [
-  { user:'starlight_j', theme:'🎤', themeName:'아이돌물', mode:'유사연', title:'봄날의 고백', excerpt:'"그냥... 네가 옆에 있으면 좋았어. 그게 다야."', likes:142, style:'dark', ago:'2시간 전' },
-  { user:'moonchild_k', theme:'🏠', themeName:'키못방', mode:'커플링', title:'이별 이후', excerpt:'"다 알고 있었어. 그래서 더 힘들었어."', likes:89, style:'sunset', ago:'5시간 전' },
-  { user:'fan99', theme:'🎵', themeName:'코첼라 에프터파티', mode:'유사연', title:'헬기 드립 대환장', excerpt:'"야, 방금 그거 아무도 못 봤지? 맞지?"', likes:67, style:'minimal', ago:'1일 전' },
-  { user:'pinkbunny22', theme:'🏥', themeName:'병원 로맨스', mode:'커플링', title:'항상 네 편이야', excerpt:'"옆에 있어줘서 다행이야."', likes:203, style:'fancy', ago:'2일 전' },
-  { user:'kpop_writer', theme:'👗', themeName:'멧갈라', mode:'커플링', title:'마지막 임무', excerpt:'"내가 막을게. 너는 먼저 가."', likes:156, style:'dark', ago:'3일 전' }
+  { user:'starlight_j', theme:'🎤', themeName:'아이돌물', mode:'유사연', title:'금성제와 나의 DM', excerpt:'"왜, 연락 오면 좋죠."', likes:142, style:'dark', ago:'지금' },
+  { user:'moonchild_k', theme:'🎵', themeName:'코첼라 에프터파티', mode:'유사연', title:'코첼라의 밤', excerpt:'"내일 아침이 되면 다 꿈 같겠죠."', likes:89, style:'sunset', ago:'1시간 전' },
+  { user:'pinkbunny22', theme:'🏠', themeName:'키못방', mode:'커플링', title:'203호 현관 앞에서', excerpt:'"그럼 좋아하든가."', likes:203, style:'fancy', ago:'어제' },
+  { user:'kpop_writer', theme:'👗', themeName:'멧갈라', mode:'커플링', title:'레드카펫 뒷이야기', excerpt:'"우연이 이렇게 예쁠 수 있군요."', likes:156, style:'dark', ago:'3일 전' },
+  { user:'fan99', theme:'🏥', themeName:'병원 로맨스', mode:'유사연', title:'항상 네 편이야', excerpt:'"의사가 환자한테 이러면 안 되는데... 연락해요."', likes:67, style:'minimal', ago:'4일 전' }
 ];
 
 // 팔로우 중인 시리즈 (새 업데이트 있는 것 포함)
@@ -1986,28 +1986,32 @@ const FOLLOW_DATA = [
     avatar: 'images/clip1.png',
     latestMsg: '"설마 나 차단했어?"',
     newCount: 6, updatedAgo: '지금',
-    totalTurns: 12
+    totalTurns: 12,
+    clipTitle: '금성제와 나의 DM'
   },
   {
     id: 'f2', user:'moonchild_k', title:'코첼라의 밤', theme:'🎵', themeName:'코첼라 에프터파티',
     avatar: null,
     latestMsg: '"내일 아침이 되면 다 꿈 같겠죠."',
     newCount: 3, updatedAgo: '1시간 전',
-    totalTurns: 8
+    totalTurns: 8,
+    clipTitle: '코첼라의 밤'
   },
   {
     id: 'f3', user:'pinkbunny22', title:'203호 현관 앞에서', theme:'🏠', themeName:'키못방',
     avatar: null,
     latestMsg: '"어, 이 시간에 들어와?"',
     newCount: 0, updatedAgo: '어제',
-    totalTurns: 20
+    totalTurns: 20,
+    clipTitle: '203호 현관 앞에서'
   },
   {
     id: 'f4', user:'kpop_writer', title:'레드카펫 뒷이야기', theme:'👗', themeName:'멧갈라',
     avatar: null,
     latestMsg: '"오늘 드레스 완벽한데요."',
     newCount: 0, updatedAgo: '3일 전',
-    totalTurns: 6
+    totalTurns: 6,
+    clipTitle: '레드카펫 뒷이야기'
   }
 ];
 
@@ -2893,13 +2897,9 @@ function openGalleryItem(itemId, type) {
     if (f) {
       f.newCount = 0;
       renderGalleryChatList();
-      // CLIP_DATA에서 title 매칭 → openClip
-      const clipMatch = CLIP_DATA.find(c => c.title === f.title);
+      // clipTitle로 CLIP_DATA 직접 매칭
+      const clipMatch = CLIP_DATA.find(c => c.title === (f.clipTitle || f.title));
       if (clipMatch) { openClip(clipMatch); return; }
-      // FEED_DATA fallback
-      const feedIdx = FEED_DATA.findIndex(fd => fd.title === f.title);
-      if (feedIdx >= 0) { openFeedItem(feedIdx); return; }
-      // 매칭 없으면 첫 번째 클립 열기
       openClip(CLIP_DATA[0]);
     }
     return;
@@ -3014,94 +3014,98 @@ function openFeedItem(i) {
 const CLIP_DATA = [
   {
     user: 'starlight_j', theme: '🎤', themeName: '아이돌물', mode: '유사연',
-    title: '봄날의 고백', style: 'dark', ago: '2시간 전', likes: 142, img: 'images/clip1.png',
+    title: '금성제와 나의 DM', style: 'dark', ago: '지금', likes: 142, img: 'images/clip1.png',
     conversations: [
-      { speaker: 1, name: '민준', text: '야, 너 오늘 왜 이렇게 멀뚱멀뚱 서 있어. 무슨 생각 해?', sceneBg: '벚꽃 나무 아래, 바람이 슬쩍 부는 오후' },
-      { speaker: 0, name: '나', text: '...아무것도 아니야. 그냥 꽃이 예뻐서.' },
-      { speaker: 1, name: '민준', text: '거짓말. 아까부터 나 보면 눈 피하잖아.' },
-      { speaker: 0, name: '나', text: '안 피했거든?! 그냥 꽃 본 거라고.' },
-      { speaker: 1, name: '민준', text: '그럼 이제 나 좀 봐봐. 제대로.', sceneBg: '민준이 한 발 가까이 다가선다' },
-      { speaker: 0, name: '나', text: '...뭐, 뭐야 갑자기.' },
-      { speaker: 1, name: '민준', text: '"그냥... 네가 옆에 있으면 좋았어. 그게 다야." 작은 목소리로.' },
+      { speaker: 0, name: '나', text: '안녕하세요. 오래 팬이었는데 용기 내서 연락해봐요.', sceneBg: '새벽 2시, 떨리는 손으로 DM을 보낸다' },
+      { speaker: 1, name: '금성제', text: '안녕하세요 ㅎㅎ' },
+      { speaker: 0, name: '나', text: '혹 답장 오실 줄 몰랐어요...' },
+      { speaker: 1, name: '금성제', text: '왜, 연락 오면 좋죠.', sceneBg: '짧은 답장인데 심장이 터질 것 같다' },
+      { speaker: 0, name: '나', text: '혹시 나 씨 맞으세요? 진짜로요?' },
+      { speaker: 1, name: '금성제', text: '네, 진짜예요 ㅋㅋ 계정 인증 필요해요?', sceneBg: '금성제가 웃음 이모티콘을 붙인다' },
+      { speaker: 0, name: '나', text: '설마 나 차단했어? 아니다 아직 읽씹이구나...', sceneBg: '30분째 답장을 기다리며 화면을 들여다본다' },
     ],
     comments: [
-      { user: 'pinkbunny22', emoji: '🐰', text: '마지막 대사에서 심장 멎는 줄 알았어요ㅠㅠ 왜 이렇게 잘 쓰셨어요', time: '1시간 전', reaction: '💜 24' },
-      { user: 'moonchild_k', emoji: '🌙', text: '민준이가 먼저 고백하는 거 진짜 설레... 작가님 다음 클립도 제발요', time: '1시간 전', reaction: '💜 18' },
-      { user: 'kpop_writer', emoji: '✍️', text: '아니 눈 피하잖아 → 제대로 봐봐 이 흐름 완벽하잖아요??? 소름', time: '30분 전', reaction: '💜 31' },
-      { user: 'fan99', emoji: '🌸', text: '벚꽃 배경 설정 천재다... 계절 감성 제대로예요', time: '15분 전', reaction: '💜 9' },
+      { user: 'pinkbunny22', emoji: '🐰', text: '계정 인증 필요해요? ㅋㅋㅋ 이 사람 유머 감각 실화야 설레죽겠다', time: '1시간 전', reaction: '💜 24' },
+      { user: 'moonchild_k', emoji: '🌙', text: '왜 연락 오면 좋죠 ← 이 말 한 마디에 밤새 잠 못 자는 나', time: '1시간 전', reaction: '💜 18' },
+      { user: 'kpop_writer', emoji: '✍️', text: '30분째 화면 들여다보는 거 너무 현실적이라 손발이 오그라들면서도 공감돼요ㅠ', time: '30분 전', reaction: '💜 31' },
+      { user: 'fan99', emoji: '🌸', text: '차단됐나 확인하는 장면... 작가님 이거 경험담 아닌가요', time: '15분 전', reaction: '💜 9' },
     ]
   },
   {
-    user: 'moonchild_k', theme: '🏠', themeName: '키못방', mode: '커플링',
-    title: '이별 이후', style: 'sunset', ago: '5시간 전', likes: 89, img: 'images/clip2.png',
+    user: 'moonchild_k', theme: '🎵', themeName: '코첼라 에프터파티', mode: '유사연',
+    title: '코첼라의 밤', style: 'sunset', ago: '1시간 전', likes: 89, img: 'images/clip2.png',
     conversations: [
-      { speaker: 0, name: '지수', text: '...왔어.', sceneBg: '비가 내리는 늦은 밤, 편의점 앞' },
-      { speaker: 1, name: '현우', text: '전화는 왜 안 받았어.' },
-      { speaker: 0, name: '지수', text: '뭐라고 해야 할지 몰라서.' },
-      { speaker: 1, name: '현우', text: '"다 알고 있었어. 그래서 더 힘들었어." 목소리가 흔들렸다.' },
-      { speaker: 0, name: '지수', text: '현우야...', sceneBg: '지수가 우산을 내린다' },
-      { speaker: 1, name: '현우', text: '비 맞잖아. 빨리 들어가.' },
-      { speaker: 0, name: '지수', text: '가지 마. 아직 할 말이 남았어.' },
+      { speaker: 1, name: '재이', text: '혼자 파티 왔어요?', sceneBg: '코첼라 에프터파티 VIP 라운지, 네온 불빛 아래' },
+      { speaker: 0, name: '나', text: '...네. 일행이랑 놓쳤어요.' },
+      { speaker: 1, name: '재이', text: '같이 있어도 돼요. 나도 혼자거든.', sceneBg: '재이가 옆 자리를 손으로 툭 친다' },
+      { speaker: 0, name: '나', text: '감사합니다. 근데... 혹시 재이 씨 맞으세요?' },
+      { speaker: 1, name: '재이', text: '어, 맞아요. 당황하지 않아도 돼요 ㅋ 자주 있는 일이라서.' },
+      { speaker: 0, name: '나', text: '아 진짜요 ㅎㅎ 저 팬이에요. 오래됐어요.' },
+      { speaker: 1, name: '재이', text: '알아요.', sceneBg: '재이가 먼저 웃는다. 밤하늘에 조명이 터진다.' },
+      { speaker: 0, name: '나', text: '"내일 아침이 되면 다 꿈 같겠죠." 작게 중얼거렸다.' },
     ],
     comments: [
-      { user: 'starlight_j', emoji: '⭐', text: '비 오는 날 편의점 앞... 작가님 내 심장 다 가져가세요', time: '4시간 전', reaction: '💜 37' },
-      { user: 'fan99', emoji: '🌸', text: '"다 알고 있었어" 이 한 마디에 두 사람 사이 역사가 다 담긴 것 같아서 눈물남', time: '3시간 전', reaction: '💜 29' },
-      { user: 'pinkbunny22', emoji: '🐰', text: '현우가 지수한테 빨리 들어가라고 하면서 못 가는 거 보이잖아요ㅠㅠ', time: '2시간 전', reaction: '💜 44' },
+      { user: 'starlight_j', emoji: '⭐', text: '"알아요" 한 마디에 모든 의미가 담긴 것 같아서 숨 멎었어요', time: '4시간 전', reaction: '💜 37' },
+      { user: 'fan99', emoji: '🌸', text: '코첼라 배경 설정이 진짜 완벽해요 그 설레는 분위기가 글에서 느껴진다', time: '3시간 전', reaction: '💜 29' },
+      { user: 'pinkbunny22', emoji: '🐰', text: '다 꿈 같겠죠 ← 이 마지막 독백에서 진짜 마음이 다 보여서 눈물날 뻔했어요', time: '2시간 전', reaction: '💜 44' },
     ]
   },
   {
-    user: 'fan99', theme: '🎵', themeName: '코첼라 에프터파티', mode: '유사연',
-    title: '헬기 드립 대환장', style: 'minimal', ago: '1일 전', likes: 67, img: 'images/clip3.png',
+    user: 'pinkbunny22', theme: '🏠', themeName: '키못방', mode: '커플링',
+    title: '203호 현관 앞에서', style: 'fancy', ago: '어제', likes: 203, img: 'images/clip3.png',
     conversations: [
-      { speaker: 1, name: '태양', text: '너 오늘 왜 이렇게 늦었어. 30분이나 기다렸잖아.', sceneBg: '약속 장소 카페 앞, 태양이 팔짱을 끼고 서 있다' },
-      { speaker: 0, name: '나', text: '미안미안, 지하철이 진짜...' },
-      { speaker: 1, name: '태양', text: '헬기 타고 와도 됐잖아.' },
-      { speaker: 0, name: '나', text: '...응?' },
-      { speaker: 1, name: '태양', text: '야, 방금 그거 아무도 못 봤지? 맞지? 나 방금 뭐라 한 거야', sceneBg: '태양이 자기 입을 손으로 가린다' },
-      { speaker: 0, name: '나', text: '헬기. 헬기 타고 오면 됐잖아. 라고 하셨는데요.' },
-      { speaker: 1, name: '태양', text: '아 몰라 들어가. 어서.', sceneBg: '귀까지 빨개진 채 먼저 문을 열고 들어가버린다' },
+      { speaker: 1, name: '현서', text: '어, 이 시간에 들어와?', sceneBg: '새벽 1시, 좁은 복도. 현서가 라면을 들고 서 있다' },
+      { speaker: 0, name: '지안', text: '...응. 일 늦게 끝났어.' },
+      { speaker: 1, name: '현서', text: '밥은 먹었어?' },
+      { speaker: 0, name: '지안', text: '아직.' },
+      { speaker: 1, name: '현서', text: '들어와. 라면 끓였는데 혼자 먹기 많아.', sceneBg: '현서가 아무렇지 않게 자기 방 문을 연다' },
+      { speaker: 0, name: '지안', text: '...야, 우리 사이가 뭔데 이래.' },
+      { speaker: 1, name: '현서', text: '몰라. 그냥 들어와.' },
+      { speaker: 0, name: '지안', text: '나 그러다 진짜 좋아하면 어쩌려고.', sceneBg: '현서가 잠깐 멈추더니 돌아보지 않은 채 말한다' },
+      { speaker: 1, name: '현서', text: '...그럼 좋아하든가.' },
     ],
     comments: [
-      { user: 'moonchild_k', emoji: '🌙', text: '헬기ㅋㅋㅋㅋㅋㅋ 이 남자 솔직히 좋아서 헬기까지 타고 오라는 거잖아요', time: '22시간 전', reaction: '💜 52' },
-      { user: 'kpop_writer', emoji: '✍️', text: '귀까지 빨개진 거 묘사 ㅠㅠ 너무 귀여워 죽겠다', time: '20시간 전', reaction: '💜 38' },
-      { user: 'starlight_j', emoji: '⭐', text: '아 몰라 들어가 ← 아이돌 특 직접적인 거 못 해서 이러는 거 맞죠?ㅋㅋㅋ', time: '18시간 전', reaction: '💜 61' },
-    ]
-  },
-  {
-    user: 'pinkbunny22', theme: '🏥', themeName: '병원 로맨스', mode: '커플링',
-    title: '항상 네 편이야', style: 'fancy', ago: '2일 전', likes: 203, img: 'images/clip4.png',
-    conversations: [
-      { speaker: 0, name: '세진', text: '오늘 무대 진짜 망한 것 같아. 왜 이렇게 실수를 많이 했지.', sceneBg: '공연 후 대기실, 세진이 혼자 앉아 있다' },
-      { speaker: 1, name: '리온', text: '망하긴. 앞줄 팬들 표정 못 봤어? 다 울고 있었는데.' },
-      { speaker: 0, name: '세진', text: '그건 감동받아서가 아니라 너무 안타까워서겠지...' },
-      { speaker: 1, name: '리온', text: '야. 나 봐봐.', sceneBg: '리온이 세진 옆에 앉아 어깨를 잡는다' },
-      { speaker: 0, name: '세진', text: '...왜.' },
-      { speaker: 1, name: '리온', text: '"옆에 있어줘서 다행이야. 없었으면 무너졌을 것 같아." 그리고 잠깐 멈췄다가 — "뭐가 됐든, 난 네 편이야. 항상."' },
-      { speaker: 0, name: '세진', text: '...바보야.', sceneBg: '세진이 고개를 숙인다. 작게 웃는 소리가 들린다.' },
-    ],
-    comments: [
-      { user: 'starlight_j', emoji: '⭐', text: '항상 네 편이야 ← 이 말 때문에 진짜 엉엉 울었어요 나도 이런 사람 하나만...', time: '2일 전', reaction: '💜 88' },
-      { user: 'moonchild_k', emoji: '🌙', text: '세진이 작게 웃는 소리 묘사에서 저도 모르게 미소 지었어요ㅠ 힐링됩니다', time: '2일 전', reaction: '💜 74' },
-      { user: 'fan99', emoji: '🌸', text: '리온이 "야 나 봐봐" 하는 거 심장에 박혔어요 이 사람 분명히 좋아하는 거잖아', time: '1일 전', reaction: '💜 96' },
-      { user: 'kpop_writer', emoji: '✍️', text: '이번 주 클립 투표 무조건 이 클립 찍었어요. 작가님 부디 다음 편도요ㅠㅠ', time: '1일 전', reaction: '💜 43' },
+      { user: 'starlight_j', emoji: '⭐', text: '그럼 좋아하든가 ← 이 말에 저도 좋아하게 됐어요 현서 씨', time: '2일 전', reaction: '💜 88' },
+      { user: 'moonchild_k', emoji: '🌙', text: '라면 혼자 먹기 많다는 핑계 너무 귀엽잖아요ㅠㅠ 이미 기다리고 있었던 거 티남', time: '2일 전', reaction: '💜 74' },
+      { user: 'fan99', emoji: '🌸', text: '협관(혐관) 설정에서 이 흐름 너무 자연스럽게 연결되는 거 진짜 작가님 천재', time: '1일 전', reaction: '💜 96' },
+      { user: 'kpop_writer', emoji: '✍️', text: '돌아보지 않은 채 말하는 거 묘사 실화임? 영화장면 같아요', time: '1일 전', reaction: '💜 43' },
     ]
   },
   {
     user: 'kpop_writer', theme: '👗', themeName: '멧갈라', mode: '커플링',
-    title: '마지막 임무', style: 'dark', ago: '3일 전', likes: 156, img: 'images/clip5.png',
+    title: '레드카펫 뒷이야기', style: 'dark', ago: '3일 전', likes: 156, img: 'images/clip4.png',
     conversations: [
-      { speaker: 0, name: '카이', text: '지금 당장 움직여! 시간이 없어!', sceneBg: '폭발 직전의 건물, 경보음이 울린다' },
-      { speaker: 1, name: '도현', text: '카이, 너 팔 다쳤잖아. 나 먼저 가면 안 돼.' },
-      { speaker: 0, name: '카이', text: '괜찮아. 내가 막을게. 너는 먼저 가.' },
-      { speaker: 1, name: '도현', text: '미쳤어? 혼자 어떻게 막아!', sceneBg: '도현이 카이 팔을 잡는다' },
-      { speaker: 0, name: '카이', text: '여기서 포기하면 다 끝이야. 같이 버텨. 네가 있으면 할 수 있어.' },
-      { speaker: 1, name: '도현', text: '...씨. 알았어. 같이 가자. 단 둘 다 살아서 나가는 거야, 알겠어?', sceneBg: '두 사람이 손을 맞잡는다' },
-      { speaker: 0, name: '카이', text: '당연하지. 약속해.' },
+      { speaker: 0, name: '세아', text: '백스테이지에서 마주치다니 이게 무슨...', sceneBg: '멧갈라 백스테이지 드레스룸, 두 사람만 남았다' },
+      { speaker: 1, name: '준', text: '오늘 드레스 완벽한데요. 의도하신 거죠?' },
+      { speaker: 0, name: '세아', text: '...무슨 의도요.' },
+      { speaker: 1, name: '준', text: '저 작년에 입었던 컬러랑 똑같아서요.', sceneBg: '준이 세아의 드레스를 보며 살짝 웃는다' },
+      { speaker: 0, name: '세아', text: '우연이에요.' },
+      { speaker: 1, name: '준', text: '그렇겠죠. 우연이 이렇게 예쁠 수 있군요.' },
+      { speaker: 0, name: '세아', text: '...지금 저 놀리는 거예요?' },
+      { speaker: 1, name: '준', text: '레드카펫 나가야 해요. 같이 나갈까요?', sceneBg: '준이 손을 내밀며 카메라 쪽을 바라본다' },
     ],
     comments: [
-      { user: 'pinkbunny22', emoji: '🐰', text: '손 맞잡는 장면에서 제 손도 같이 쥐어졌어요ㅠ 긴장감 미쳤다', time: '3일 전', reaction: '💜 67' },
-      { user: 'starlight_j', emoji: '⭐', text: '"네가 있으면 할 수 있어" 액션 클립에서 이런 감성 드롭이 나올 줄 몰랐다 작가님 천재', time: '2일 전', reaction: '💜 89' },
-      { user: 'moonchild_k', emoji: '🌙', text: '당연하지 약속해 ← 이 마지막 한 마디로 살아서 나올 거란 확신이 생기는 마법', time: '2일 전', reaction: '💜 72' },
+      { user: 'pinkbunny22', emoji: '🐰', text: '컬러 맞췄다는 거 알면서도 우연이라고 하는 세아 심장이 얼마나 떨렸을까요ㅠ', time: '3일 전', reaction: '💜 67' },
+      { user: 'starlight_j', emoji: '⭐', text: '"우연이 이렇게 예쁠 수 있군요" 이거 실화로 들으면 그냥 쓰러지는 거 아닌가요', time: '2일 전', reaction: '💜 89' },
+      { user: 'moonchild_k', emoji: '🌙', text: '손 내밀며 같이 나갈까요 ← 여기서 레드카펫 둘이 같이 나갔으면 좋겠다 다음 편 주세요', time: '2일 전', reaction: '💜 72' },
+    ]
+  },
+  {
+    user: 'fan99', theme: '🏥', themeName: '병원 로맨스', mode: '유사연',
+    title: '항상 네 편이야', style: 'minimal', ago: '4일 전', likes: 67, img: 'images/clip5.png',
+    conversations: [
+      { speaker: 1, name: '도윤', text: '괜찮으세요? 안색이 많이 안 좋아 보여서요.', sceneBg: '병원 복도, 도윤 선생님이 차트를 들고 서 있다' },
+      { speaker: 0, name: '나', text: '...그냥 못 잔 것 같아요.' },
+      { speaker: 1, name: '도윤', text: '검사 결과는 다 정상이에요. 너무 걱정하지 않아도 돼요.' },
+      { speaker: 0, name: '나', text: '근데 선생님은 왜 항상 이렇게 친절하게 봐주세요.' },
+      { speaker: 1, name: '도윤', text: '...그게 의사 일이니까요.', sceneBg: '잠깐 망설이다가 차트를 내려놓는다' },
+      { speaker: 0, name: '나', text: '퇴원하고 나서도 연락해도 될까요?' },
+      { speaker: 1, name: '도윤', text: '의사가 환자한테 이러면 안 되는데... 네. 연락해요.', sceneBg: '도윤이 처음으로 환하게 웃는다' },
+    ],
+    comments: [
+      { user: 'moonchild_k', emoji: '🌙', text: '의사가 환자한테 이러면 안 되는데 하면서 연락해요 ← 이게 세상에서 제일 설레는 문장이에요', time: '22시간 전', reaction: '💜 52' },
+      { user: 'kpop_writer', emoji: '✍️', text: '처음으로 환하게 웃는다는 묘사에서 도윤 선생님 얼굴 상상하다가 혼났어요', time: '20시간 전', reaction: '💜 38' },
+      { user: 'starlight_j', emoji: '⭐', text: '차트 내려놓는 거 진짜 디테일... 이 작가님 묘사력 어디서 배우셨어요', time: '18시간 전', reaction: '💜 61' },
     ]
   }
 ];
