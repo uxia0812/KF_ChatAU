@@ -263,6 +263,7 @@ input, textarea { font-family: inherit; outline: none; }
 .step-item.current .step-lbl { color: var(--accent); font-weight: 700; }
 
 .step-content { padding: 16px; }
+.step-content.s4-active { padding: 0; }
 
 /* step panel */
 .step-panel { display: none; }
@@ -469,126 +470,160 @@ input, textarea { font-family: inherit; outline: none; }
 .chat-meta-info { font-size: 11px; color: var(--sub); }
 .chat-meta-turns { font-size: 12px; font-weight: 700; }
 
-.chat-area {
-  margin-bottom: 12px; min-height: 200px;
-  background: #000; border-radius: 16px; padding: 12px 8px;
+/* ── STEP 4 CHAT: iMessage full-screen layout ── */
+.s4-wrap {
+  display: flex; flex-direction: column;
+  height: calc(100vh - 52px - 56px); /* topnav + bottomnav */
+  background: #fff;
 }
 
+/* 상단 헤더 */
+.s4-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid #e5e5ea;
+  background: #fff; flex-shrink: 0;
+}
+.s4-header-avatar {
+  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg,var(--accent),var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; overflow: hidden;
+}
+.s4-header-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.s4-header-body { flex: 1; min-width: 0; }
+.s4-header-name { font-size: 15px; font-weight: 700; color: #000; }
+.s4-header-sub { font-size: 11px; color: #8e8e93; margin-top: 1px; }
+.s4-header-count {
+  font-size: 13px; font-weight: 700; color: #3a3a3c;
+  background: #f2f2f7; border-radius: 10px; padding: 4px 10px;
+}
+
+/* 채팅 스크롤 영역 */
+.chat-area {
+  flex: 1; overflow-y: auto; padding: 16px 12px;
+  background: #fff;
+}
+
+/* 버블 */
 .bubble-group { margin-bottom: 2px; }
-/* iMessage: avatar only on left side, no name labels */
-.bubble-row { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 2px; }
+.bubble-row { display: flex; align-items: flex-end; gap: 7px; margin-bottom: 2px; }
 .bubble-row.right { flex-direction: row-reverse; }
 .bubble-avatar {
-  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  background: var(--surface2); border: 1px solid rgba(255,255,255,.12);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; overflow: hidden; margin-bottom: 2px;
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: #e5e5ea; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; overflow: hidden; align-self: flex-end;
 }
 .bubble-avatar img { width: 100%; height: 100%; object-fit: cover; }
-/* hide avatar on right side (= "me") */
 .bubble-row.right .bubble-avatar { display: none; }
-/* show sender name only for left (first bubble in group) */
-.bubble-name { font-size: 10px; color: #8e8e93; margin-bottom: 3px; padding-left: 34px; }
-.bubble-row.right + .bubble-row.right .bubble-name,
-.bubble-row.right .bubble-name { display: none; }
+.bubble-name { font-size: 11px; color: #8e8e93; margin-bottom: 4px; padding-left: 37px; }
 .bubble {
-  max-width: 72%; border-radius: 18px; padding: 9px 13px;
-  font-size: 14px; line-height: 1.45; word-break: break-word;
-  position: relative;
+  max-width: 70%; border-radius: 18px; padding: 9px 14px;
+  font-size: 15px; line-height: 1.4; word-break: break-word;
 }
-/* left bubble — iMessage gray */
-.bubble.left {
-  background: #2c2c2e;
-  color: #fff;
-  border-bottom-left-radius: 4px;
-}
-/* right bubble — iMessage blue */
-.bubble.right {
-  background: #0a84ff;
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-/* spacing between consecutive same-side bubbles */
-.bubble-group + .bubble-group { margin-top: 8px; }
+.bubble.left { background: #e9e9eb; color: #000; border-bottom-left-radius: 4px; }
+.bubble.right { background: #0a84ff; color: #fff; border-bottom-right-radius: 4px; }
+.bubble-group + .bubble-group { margin-top: 10px; }
 
 .scene-bg-strip {
-  background: rgba(250,204,21,.07); border: 1px dashed rgba(250,204,21,.25);
-  border-radius: 8px; padding: 6px 10px; margin: 6px 0;
-  font-size: 11px; color: #d4a017; display: flex; align-items: center; gap: 5px;
+  text-align: center; padding: 4px 0; margin: 8px 0;
+  font-size: 11px; color: #8e8e93;
 }
 
-/* current turn input */
-.turn-input-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px;
-}
-.turn-label {
-  font-size: 11px; font-weight: 700; color: var(--accent2);
-  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
-}
-.turn-who { display: flex; gap: 6px; margin-bottom: 8px; }
-.turn-who-btn {
-  flex: 1; padding: 7px; border-radius: 8px; font-size: 11px;
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--sub); cursor: pointer; text-align: center; transition: .15s;
-}
-.turn-who-btn.on {
-  background: rgba(139,92,246,.15); border-color: var(--accent); color: var(--accent2);
-}
-.chat-input {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text); border-radius: 10px; padding: 9px 11px;
-  font-size: 13px; resize: none; transition: border-color .2s;
-  line-height: 1.5; min-height: 72px;
-}
-.chat-input:focus { border-color: var(--accent); }
-.chat-input::placeholder { color: var(--muted); }
-.ai-action-row { display: flex; align-items: center; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
-.ai-btn {
-  display: flex; align-items: center; gap: 4px;
-  background: rgba(139,92,246,.12); border: 1px solid rgba(139,92,246,.3);
-  color: var(--accent2); border-radius: 20px; padding: 5px 10px;
-  font-size: 11px; font-weight: 600; cursor: pointer; transition: .15s;
-}
-.ai-btn:hover { background: rgba(139,92,246,.22); }
-.ai-cost { font-size: 10px; color: var(--muted); margin-left: auto; }
-.scene-input-row {
-  margin-top: 8px;
-}
-.scene-input {
-  width: 100%; background: var(--surface2); border: 1px dashed rgba(250,204,21,.25);
-  color: #d4a017; border-radius: 8px; padding: 7px 10px;
-  font-size: 11px; transition: .2s; placeholder-color: #888;
-}
-.scene-input::placeholder { color: #665820; }
-.scene-input:focus { border-color: rgba(250,204,21,.5); outline: none; }
-
-/* AI suggestion box */
+/* AI suggestion box (inside input area) */
 .ai-suggestion {
-  background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.3);
-  border-radius: 10px; padding: 10px; margin-top: 8px; display: none;
+  background: #f2f2f7; border-radius: 12px;
+  padding: 10px 12px; margin: 0 0 8px; display: none;
 }
 .ai-suggestion.visible { display: block; }
 .ai-suggestion-label {
-  font-size: 10px; font-weight: 700; color: var(--accent2); margin-bottom: 5px;
-  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; color: var(--accent); margin-bottom: 5px;
 }
-.ai-suggestion-text { font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 7px; }
+.ai-suggestion-text { font-size: 13px; color: #000; line-height: 1.5; margin-bottom: 7px; }
 .ai-suggestion-actions { display: flex; gap: 6px; }
 .ai-accept {
-  background: var(--accent); color: #fff; border-radius: 7px;
-  padding: 5px 12px; font-size: 11px; font-weight: 700; border: none; cursor: pointer;
+  background: var(--accent); color: #fff; border-radius: 8px;
+  padding: 5px 14px; font-size: 12px; font-weight: 700; border: none; cursor: pointer;
 }
-.ai-reject { background: var(--surface2); color: var(--sub); border-radius: 7px; padding: 5px 12px; font-size: 11px; border: 1px solid var(--border); cursor: pointer; }
+.ai-reject {
+  background: #e5e5ea; color: #3a3a3c; border-radius: 8px;
+  padding: 5px 12px; font-size: 12px; border: none; cursor: pointer;
+}
 
-.turn-add-btn {
-  width: 100%; padding: 11px; background: var(--surface);
-  border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
-  color: var(--sub); font-size: 13px; cursor: pointer; transition: .2s;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
+/* 하단 입력 영역 (고정) */
+.s4-input-area {
+  flex-shrink: 0; background: #fff;
+  border-top: 1px solid #e5e5ea; padding: 8px 12px 6px;
 }
-.turn-add-btn:hover { border-color: var(--accent); color: var(--accent2); }
-.turn-add-btn:disabled { opacity: .4; cursor: not-allowed; }
+.s4-speaker-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 7px;
+}
+.s4-speaker-tabs { display: flex; gap: 6px; }
+.s4-speaker-tab {
+  padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  background: #f2f2f7; color: #8e8e93; cursor: pointer; border: none; transition: .15s;
+}
+.s4-speaker-tab.on { background: #000; color: #fff; }
+.s4-cost-label { font-size: 11px; color: #8e8e93; }
+
+.s4-input-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.s4-photo-btn {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: #f2f2f7; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.s4-text-input {
+  flex: 1; background: #f2f2f7; border: 1px solid #e5e5ea; border-radius: 20px;
+  padding: 8px 14px; font-size: 15px; color: #000; resize: none;
+  outline: none; line-height: 1.4; max-height: 96px; overflow-y: auto;
+  font-family: inherit;
+}
+.s4-text-input::placeholder { color: #8e8e93; }
+.s4-text-input:focus { border-color: #0a84ff; }
+.s4-send-btn {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: #0a84ff; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  font-size: 16px; transition: .15s;
+}
+.s4-send-btn:disabled { background: #e5e5ea; color: #8e8e93; cursor: default; }
+
+.s4-action-row {
+  display: flex; gap: 7px; padding-bottom: 2px;
+}
+.s4-action-btn {
+  display: flex; align-items: center; gap: 4px;
+  background: #f2f2f7; border: none; border-radius: 16px;
+  padding: 6px 12px; font-size: 12px; font-weight: 600; color: #3a3a3c;
+  cursor: pointer; transition: background .15s;
+}
+.s4-action-btn:hover { background: #e5e5ea; }
+
+/* 하단 이전/다음 버튼 */
+.s4-nav-row {
+  display: flex; gap: 8px; padding: 8px 12px 10px; background: #fff;
+  border-top: 1px solid #e5e5ea; flex-shrink: 0;
+}
+.s4-prev-btn {
+  flex: 0 0 auto; padding: 13px 18px; border-radius: 12px;
+  background: #f2f2f7; border: none; font-size: 14px; font-weight: 700;
+  color: #3a3a3c; cursor: pointer;
+}
+.s4-next-btn {
+  flex: 1; padding: 13px; border-radius: 12px;
+  background: #000; border: none; font-size: 15px; font-weight: 800;
+  color: #fff; cursor: pointer;
+}
+
+/* compat stubs */
+.turn-input-card { display: none; }
+.turn-add-btn { display: none; }
+.chat-input { display: none; }
+.ai-action-row { display: none; }
+.scene-input-row { display: none; }
+.turn-who { display: none; }
 
 /* STEP 5 — CARD */
 .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
@@ -2163,6 +2198,9 @@ function renderStep() {
 }
 
 function renderStepBar() {
+  // step 4(대화)일 때 step-bar 숨김
+  const stepBarWrap = document.querySelector('.step-bar');
+  if (stepBarWrap) stepBarWrap.style.display = state.currentStep === 3 ? 'none' : '';
   const bar = document.getElementById('step-bar');
   bar.innerHTML = STEPS.map((s,i) => {
     const cls = i < state.currentStep ? 'done' : i === state.currentStep ? 'current' : '';
@@ -2175,6 +2213,7 @@ function renderStepBar() {
 
 function renderStepContent() {
   const c = document.getElementById('step-content');
+  c.classList.toggle('s4-active', state.currentStep === 3);
   const renders = [s1_theme, s2_character, s3_mode, s4_chat, s5_card];
   c.innerHTML = `<div class="step-panel active fade-up">${renders[state.currentStep]()}</div>`;
   bindStep();
@@ -2182,6 +2221,8 @@ function renderStepContent() {
 
 function renderStepNav() {
   const nav = document.getElementById('step-nav');
+  // step 4(대화)는 s4-wrap 내부 버튼 사용, nav 숨김
+  if (state.currentStep === 3) { nav.innerHTML = ''; return; }
   const isLast = state.currentStep === STEPS.length - 1;
   nav.innerHTML = `
     ${state.currentStep > 0 ? `<button class="btn-back" onclick="prevStep()">← 이전</button>` : ''}
@@ -2478,29 +2519,29 @@ function s4_chat() {
   const ch = state.characters;
   const nameA = ch[0].name || (state.mode==='reader' ? '나' : '캐릭터 A');
   const nameB = state.mode==='reader' ? ch[0].name || '캐릭터' : (ch[1].name || '캐릭터 B');
+  const whoA = state.mode==='reader' ? '나' : nameA;
+  const maxMessages = state.turns * 2;
+  const canAdd = state.conversations.length < maxMessages;
+  const sceneName = THEMES.find(t=>t.id===state.selectedTheme)?.name || '';
 
+  // 버블 렌더
   let convHtml = '';
   let prevSpeaker = -1;
-  state.conversations.forEach((conv, idx) => {
-    const isRight = conv.speaker === 0; // speaker 0 = "나" → right (blue)
-    const name = conv.speaker === 0 ? (state.mode==='reader'?'나':nameA) : nameB;
+  state.conversations.forEach(conv => {
+    const isRight = conv.speaker === 0;
+    const name = conv.speaker === 0 ? whoA : nameB;
     const avatar = state.characters[conv.speaker]?.avatar;
-    const isFirstInGroup = conv.speaker !== prevSpeaker;
+    const isFirst = conv.speaker !== prevSpeaker;
     prevSpeaker = conv.speaker;
 
-    // left side avatar (only for non-"me" speaker, only on first in group)
+    if (conv.sceneBg) {
+      convHtml += `<div class="scene-bg-strip">— ${conv.sceneBg} —</div>`;
+    }
+    const nameHtml = (!isRight && isFirst) ? `<div class="bubble-name">${name}</div>` : '';
     const avatarHtml = !isRight
       ? (avatar
-          ? `<div class="bubble-avatar"${isFirstInGroup?'':' style="visibility:hidden"'}><img src="${avatar}"></div>`
-          : `<div class="bubble-avatar"${isFirstInGroup?'':' style="visibility:hidden"'} style="background:#3a3a3c;color:#fff;${isFirstInGroup?'':'visibility:hidden'}">${name[0]||'?'}</div>`)
-      : '';
-
-    if (conv.sceneBg) {
-      convHtml += `<div class="scene-bg-strip">🎬 ${conv.sceneBg}</div>`;
-    }
-    // show sender name only for left side first message in group
-    const nameHtml = (!isRight && isFirstInGroup)
-      ? `<div class="bubble-name">${name}</div>`
+          ? `<div class="bubble-avatar"${isFirst?'':' style="visibility:hidden"'}><img src="${avatar}"></div>`
+          : `<div class="bubble-avatar"${isFirst?'':' style="visibility:hidden"'}>${name[0]||'?'}</div>`)
       : '';
 
     convHtml += `
@@ -2513,66 +2554,95 @@ function s4_chat() {
       </div>`;
   });
 
-  const maxMessages = state.turns * 2;
-  const canAdd = state.conversations.length < maxMessages;
-  const whoA = state.mode==='reader' ? '나' : nameA;
-  const whoB = nameB;
-
-  // 이미지 영역 HTML 빌드
-  const imgAreaHtml = buildImgGenArea();
+  const avatarBSrc = state.characters[1]?.avatar;
+  const avatarBHtml = avatarBSrc
+    ? `<img src="${avatarBSrc}">`
+    : (THEMES.find(t=>t.id===state.selectedTheme)?.emoji||'💬');
 
   return `
-    <!-- iMessage 스타일 채팅 헤더 -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
-      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">
-        ${state.characters[1]?.avatar ? `<img src="${state.characters[1].avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (THEMES.find(t=>t.id===state.selectedTheme)?.emoji||'💬')}
+  <div class="s4-wrap">
+    <!-- 헤더 -->
+    <div class="s4-header">
+      <div class="s4-header-avatar">${avatarBHtml}</div>
+      <div class="s4-header-body">
+        <div class="s4-header-name">${nameB}</div>
+        <div class="s4-header-sub">${state.turns}턴 · ${state.conversations.length}/${maxMessages}개</div>
       </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:800;line-height:1.2;">${nameB}</div>
-        <div style="font-size:10px;color:var(--sub);">${THEMES.find(t=>t.id===state.selectedTheme)?.name||''} · ${state.mode==='reader'?'유사연':'커플링'}</div>
-      </div>
-      <div style="font-size:12px;font-weight:700;color:var(--accent2);">${state.conversations.length}<span style="color:var(--muted);">/${maxMessages}</span></div>
+      <div class="s4-header-count">${state.conversations.length}/${maxMessages}</div>
     </div>
 
-    ${imgAreaHtml}
-
-    <div class="chat-area">${convHtml || '<div style="text-align:center;color:#8e8e93;font-size:12px;padding:30px 0;">아직 대화가 없어요<br>아래에서 첫 대사를 써봐요</div>'}</div>
+    <!-- 채팅 영역 -->
+    <div class="chat-area" id="s4-chat-scroll">
+      ${convHtml || '<div style="text-align:center;color:#8e8e93;font-size:13px;padding:48px 0 0;">아직 대화가 없어요<br>아래에서 첫 대사를 써봐요</div>'}
+    </div>
 
     ${canAdd ? `
-    <div class="turn-input-card">
-      <div class="turn-label">✍️ Turn ${state.conversations.length + 1}</div>
-      <div class="turn-who" id="turn-who-btns">
-        <div class="turn-who-btn ${currentTurnWho===0?'on':''}" onclick="setTurnWho(0)">나 (${whoA})</div>
-        <div class="turn-who-btn ${currentTurnWho===1?'on':''}" onclick="setTurnWho(1)">${whoB}</div>
+    <!-- AI 추천 박스 -->
+    <div class="ai-suggestion" id="ai-suggest-box" style="margin:0 12px 0;">
+      <div class="ai-suggestion-label">✨ AI 추천 대사</div>
+      <div class="ai-suggestion-text" id="ai-suggest-text"></div>
+      <div class="ai-suggestion-actions">
+        <button class="ai-accept" onclick="acceptSuggestion()">채택</button>
+        <button class="ai-reject" onclick="rejectSuggestion()">다른 추천</button>
+        <button class="ai-reject" onclick="closeAISuggest()">닫기</button>
       </div>
-      <textarea class="chat-input" id="chat-text-input" placeholder="대사를 직접 입력하세요... (최대 500자)" maxlength="500" rows="3"></textarea>
-      <div class="ai-action-row">
-        <button class="ai-btn" onclick="requestAISuggest()">✨ AI 추천</button>
-        <button class="ai-btn" onclick="openRefineModal()">✏️ 다듬기</button>
-        <span class="ai-cost">★5~10 소비</span>
-      </div>
-      <div class="ai-suggestion" id="ai-suggest-box">
-        <div class="ai-suggestion-label">✨ AI 추천 대사</div>
-        <div class="ai-suggestion-text" id="ai-suggest-text"></div>
-        <div class="ai-suggestion-actions">
-          <button class="ai-accept" onclick="acceptSuggestion()">채택</button>
-          <button class="ai-reject" onclick="rejectSuggestion()">다른 추천</button>
-          <button class="ai-reject" onclick="closeAISuggest()">닫기</button>
+    </div>
+
+    <!-- 입력 영역 -->
+    <div class="s4-input-area">
+      <div class="s4-speaker-row">
+        <div class="s4-speaker-tabs">
+          <button class="s4-speaker-tab ${currentTurnWho===0?'on':''}" onclick="setTurnWho(0)">${whoA}</button>
+          <button class="s4-speaker-tab ${currentTurnWho===1?'on':''}" onclick="setTurnWho(1)">${nameB}</button>
         </div>
+        <div class="s4-cost-label">★5-10</div>
       </div>
-      <div class="scene-input-row">
-        <div class="field-label" style="margin-bottom:3px;">🎬 장면 배경 (선택 · 최대 100자)</div>
-        <input class="scene-input" id="scene-input" placeholder="예: 카페 앞 골목, 늦은 오후..." maxlength="100">
+      <div class="s4-input-row">
+        <button class="s4-photo-btn" onclick="showToast('이미지 첨부 준비 중')">🖼</button>
+        <textarea class="s4-text-input" id="chat-text-input" placeholder="메시지를 입력하세요..." maxlength="500" rows="1"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"></textarea>
+        <button class="s4-send-btn" id="s4-send-btn" onclick="addTurn()">↑</button>
       </div>
-      <button class="turn-add-btn" onclick="addTurn()" style="margin-top:8px;width:100%;">대사 추가 ＋</button>
-    </div>` : `<div style="text-align:center;padding:12px;background:rgba(139,92,246,.08);border-radius:10px;font-size:12px;color:var(--accent2);">
-      🎉 ${state.turns}턴 (${maxMessages}개) 완성! 카드를 만들어봐요</div>`}
-  `;
+      <div class="s4-action-row">
+        <button class="s4-action-btn" onclick="requestAISuggest()">✨ AI 추천</button>
+        <button class="s4-action-btn" onclick="openRefineModal()">✏️ 다듬기</button>
+        <button class="s4-action-btn" onclick="toggleSceneInput()">🎬 장면 배경</button>
+      </div>
+      <div id="s4-scene-row" style="display:none;margin-top:6px;">
+        <input id="scene-input" placeholder="예: 카페 앞 골목, 늦은 오후..." maxlength="100"
+          style="width:100%;background:#f2f2f7;border:1px solid #e5e5ea;border-radius:12px;padding:8px 12px;font-size:13px;color:#000;outline:none;">
+      </div>
+    </div>
+
+    <!-- 이전/다음 버튼 -->
+    <div class="s4-nav-row">
+      <button class="s4-prev-btn" onclick="prevStep()">← 이전</button>
+      <button class="s4-next-btn" onclick="nextStep()">다음 →</button>
+    </div>
+    ` : `
+    <!-- 완성 -->
+    <div class="s4-input-area" style="text-align:center;padding:16px;">
+      <div style="font-size:13px;color:#3a3a3c;margin-bottom:12px;">🎉 ${state.turns}턴 완성!</div>
+    </div>
+    <div class="s4-nav-row">
+      <button class="s4-prev-btn" onclick="prevStep()">← 이전</button>
+      <button class="s4-next-btn" onclick="nextStep()">카드 만들기 →</button>
+    </div>
+    `}
+  </div>`;
 }
 
 function setTurnWho(n) {
   currentTurnWho = n;
+  // new UI tabs
+  document.querySelectorAll('.s4-speaker-tab').forEach((el,i) => el.classList.toggle('on', i===n));
+  // legacy compat
   document.querySelectorAll('.turn-who-btn').forEach((el,i) => el.classList.toggle('on', i===n));
+}
+
+function toggleSceneInput() {
+  const row = document.getElementById('s4-scene-row');
+  if (row) row.style.display = row.style.display === 'none' ? 'block' : 'none';
 }
 
 function addTurn() {
